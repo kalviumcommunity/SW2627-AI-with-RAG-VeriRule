@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     allowed_origins: str = "http://localhost:3000"
     database_url: str = "sqlite:///./data/verirule.db"
     upload_directory: str = "./data/uploads"
+    chroma_directory: str = "./data/chroma"
+    chroma_collection: str = "verirule_documents"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
