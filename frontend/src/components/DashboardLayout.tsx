@@ -64,7 +64,10 @@ export default function DashboardLayout() {
 
           <div className="sidebar-group-label">Governance</div>
 
-          <Link to="/dashboard" className="sidebar-nav-item">
+          <Link
+            to="/dashboard/query-engine"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/query-engine') ? 'active' : ''}`}
+          >
             <div className="sidebar-nav-left">
               <span className="sidebar-icon">🛡️</span>
               <span>Audit Trail</span>
