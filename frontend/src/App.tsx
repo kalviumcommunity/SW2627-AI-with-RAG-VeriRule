@@ -5,6 +5,7 @@ import SignUpPage from './pages/SignUpPage'
 import DashboardLayout from './components/DashboardLayout'
 import DashboardPage from './pages/DashboardPage'
 import CircularsPage from './pages/CircularsPage'
+import QueryEnginePage from './pages/QueryEnginePage'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="circulars" element={<CircularsPage />} />
+          <Route path="query-engine" element={<QueryEnginePage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
