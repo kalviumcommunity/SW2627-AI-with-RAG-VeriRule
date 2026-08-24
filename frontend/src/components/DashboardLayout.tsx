@@ -86,7 +86,10 @@ export default function DashboardLayout() {
 
           <div className="sidebar-group-label">System</div>
 
-          <Link to="/dashboard" className="sidebar-nav-item">
+          <Link
+            to="/dashboard/settings"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/settings') ? 'active' : ''}`}
+          >
             <div className="sidebar-nav-left">
               <span className="sidebar-icon">⚙️</span>
               <span>Settings</span>

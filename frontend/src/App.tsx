@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage'
 import CircularsPage from './pages/CircularsPage'
 import QueryEnginePage from './pages/QueryEnginePage'
 import AuditTrailPage from './pages/AuditTrailPage'
+import SettingsPage from './pages/SettingsPage'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="circulars" element={<CircularsPage />} />
           <Route path="query-engine" element={<QueryEnginePage />} />
           <Route path="audit-trail" element={<AuditTrailPage />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
