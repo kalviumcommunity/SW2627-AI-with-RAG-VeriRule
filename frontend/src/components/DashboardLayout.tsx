@@ -65,8 +65,8 @@ export default function DashboardLayout() {
           <div className="sidebar-group-label">Governance</div>
 
           <Link
-            to="/dashboard/query-engine"
-            className={`sidebar-nav-item ${path.startsWith('/dashboard/query-engine') ? 'active' : ''}`}
+            to="/dashboard/audit-trail"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/audit-trail') ? 'active' : ''}`}
           >
             <div className="sidebar-nav-left">
               <span className="sidebar-icon">🛡️</span>
@@ -74,7 +74,10 @@ export default function DashboardLayout() {
             </div>
           </Link>
 
-          <Link to="/dashboard" className="sidebar-nav-item">
+          <Link
+            to="/dashboard/query-engine"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/query-engine') ? 'active' : ''}`}
+          >
             <div className="sidebar-nav-left">
               <span className="sidebar-icon">⚡</span>
               <span>AI Query Engine</span>

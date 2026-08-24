@@ -6,6 +6,7 @@ import DashboardLayout from './components/DashboardLayout'
 import DashboardPage from './pages/DashboardPage'
 import CircularsPage from './pages/CircularsPage'
 import QueryEnginePage from './pages/QueryEnginePage'
+import AuditTrailPage from './pages/AuditTrailPage'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="circulars" element={<CircularsPage />} />
           <Route path="query-engine" element={<QueryEnginePage />} />
+          <Route path="audit-trail" element={<AuditTrailPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
@@ -28,3 +30,4 @@ function App() {
 }
 
 export default App
+
