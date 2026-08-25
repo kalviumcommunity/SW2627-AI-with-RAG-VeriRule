@@ -81,7 +81,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Two Column: Authority Coverage + Quick Access ─────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+      <div className="dashboard-overview-grid">
 
         {/* Authority Distribution */}
         <div className="dashboard-section-card" style={{ marginBottom: 0 }}>
