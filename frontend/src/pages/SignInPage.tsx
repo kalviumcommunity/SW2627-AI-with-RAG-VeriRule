@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 interface FormState {
   email: string
@@ -54,6 +55,7 @@ function validate(form: FormState): FormErrors {
 
 function SignInPage() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [form, setForm] = useState<FormState>({ email: '', password: '' })
   const [errors, setErrors] = useState<FormErrors>({})
   const [showPassword, setShowPassword] = useState(false)
@@ -78,8 +80,8 @@ function SignInPage() {
     setErrors({})
     try {
       // Simulate API call
-      await new Promise((res) => setTimeout(res, 1500))
-      // TODO: replace with real auth API call
+      await new Promise((res) => setTimeout(res, 800))
+      login(form.email, form.password)
       navigate('/dashboard')
     } catch {
       setErrors({ general: 'Invalid credentials. Please try again.' })

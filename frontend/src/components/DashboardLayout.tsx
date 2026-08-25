@@ -1,9 +1,18 @@
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 export default function DashboardLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const path = location.pathname
+  const { user, logout } = useAuth()
+
+  const avatarInitial = user.name ? user.name.trim().charAt(0).toUpperCase() : 'U'
+
+  const handleSignOut = () => {
+    logout()
+    navigate('/signin')
+  }
 
   return (
     <div className="dashboard-layout">
@@ -20,15 +29,15 @@ export default function DashboardLayout() {
 
         <div className="dashboard-header-right">
           <div className="dashboard-user-badge">
-            <div className="user-avatar">A</div>
+            <div className="user-avatar">{avatarInitial}</div>
             <div className="user-info">
-              <span className="user-name">Alex Morgan</span>
-              <span className="user-role">Compliance Officer</span>
+              <span className="user-name">{user.name}</span>
+              <span className="user-role">{user.role}</span>
             </div>
           </div>
           <button
             type="button"
-            onClick={() => navigate('/signin')}
+            onClick={handleSignOut}
             className="btn btn-secondary btn-sm"
           >
             Sign out
