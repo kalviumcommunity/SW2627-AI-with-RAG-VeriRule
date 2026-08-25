@@ -1,9 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
 
-const initialSettings = {
-  displayName: 'Alex Morgan',
-  email: 'alex.morgan@verirule.bank',
-  role: 'Compliance Officer',
+const initialPreferences = {
   answerStyle: 'concise',
   minimumConfidence: '0.75',
   includeHistorical: true,
@@ -15,23 +13,43 @@ const initialSettings = {
 }
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState(initialSettings)
+  const { user, updateUser } = useAuth()
+  const [displayName, setDisplayName] = useState(user.name)
+  const [email, setEmail] = useState(user.email)
+  const [preferences, setPreferences] = useState(initialPreferences)
   const [saved, setSaved] = useState(false)
 
-  const updateSetting = <Key extends keyof typeof initialSettings>(key: Key, value: (typeof initialSettings)[Key]) => {
-    setSettings((current) => ({ ...current, [key]: value }))
+  useEffect(() => {
+    setDisplayName(user.name)
+    setEmail(user.email)
+  }, [user.name, user.email])
+
+  const updatePreference = <Key extends keyof typeof initialPreferences>(
+    key: Key,
+    value: (typeof initialPreferences)[Key]
+  ) => {
+    setPreferences((current) => ({ ...current, [key]: value }))
     setSaved(false)
   }
 
   const saveSettings = () => {
+    updateUser({ name: displayName, email: email })
     setSaved(true)
     window.setTimeout(() => setSaved(false), 2800)
   }
 
   const resetSettings = () => {
-    setSettings(initialSettings)
+    setDisplayName(user.name)
+    setEmail(user.email)
+    setPreferences(initialPreferences)
     setSaved(false)
   }
+
+  // Derive initials for avatar display
+  const nameParts = displayName.trim().split(/\s+/)
+  const initials = nameParts.length >= 2
+    ? (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase()
+    : displayName.charAt(0).toUpperCase() || 'U'
 
   return (
     <div className="settings-page">
@@ -54,40 +72,68 @@ export default function SettingsPage() {
 
         <div className="settings-sections">
           <section id="profile" className="dashboard-section-card settings-card">
-            <div className="settings-card-heading"><div><h2>Profile</h2><p>Details shown across your compliance workspace.</p></div><div className="profile-avatar">AM</div></div>
+            <div className="settings-card-heading">
+              <div>
+                <h2>Profile</h2>
+                <p>Details shown across your compliance workspace.</p>
+              </div>
+              <div className="profile-avatar">{initials}</div>
+            </div>
             <div className="settings-form-grid">
-              <label className="form-group"><span className="form-label">Display name</span><input className="form-input" value={settings.displayName} onChange={(event) => updateSetting('displayName', event.target.value)} /></label>
-              <label className="form-group"><span className="form-label">Work email</span><input className="form-input" type="email" value={settings.email} onChange={(event) => updateSetting('email', event.target.value)} /></label>
-              <label className="form-group"><span className="form-label">Role</span><input className="form-input" value={settings.role} disabled /></label>
-              <div className="settings-readonly"><span className="form-label">Access level</span><span className="access-badge">Standard officer access</span><small>Managed by your organization administrator.</small></div>
+              <label className="form-group">
+                <span className="form-label">Display name</span>
+                <input
+                  className="form-input"
+                  value={displayName}
+                  onChange={(event) => setDisplayName(event.target.value)}
+                />
+              </label>
+              <label className="form-group">
+                <span className="form-label">Work email</span>
+                <input
+                  className="form-input"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </label>
+              <label className="form-group">
+                <span className="form-label">Role</span>
+                <input className="form-input" value={user.role} disabled />
+              </label>
+              <div className="settings-readonly">
+                <span className="form-label">Access level</span>
+                <span className="access-badge">Standard officer access</span>
+                <small>Managed by your organization administrator.</small>
+              </div>
             </div>
           </section>
 
           <section id="query-preferences" className="dashboard-section-card settings-card">
             <div className="settings-card-heading"><div><h2>Query preferences</h2><p>Set how the engine presents grounded compliance intelligence.</p></div><span className="settings-icon">⚡</span></div>
             <div className="settings-form-grid">
-              <label className="form-group"><span className="form-label">Answer style</span><select className="form-input" value={settings.answerStyle} onChange={(event) => updateSetting('answerStyle', event.target.value)}><option value="concise">Concise and decision-ready</option><option value="detailed">Detailed with full context</option></select></label>
-              <label className="form-group"><span className="form-label">Minimum confidence threshold</span><select className="form-input" value={settings.minimumConfidence} onChange={(event) => updateSetting('minimumConfidence', event.target.value)}><option value="0.6">60% · Exploratory</option><option value="0.75">75% · Recommended</option><option value="0.9">90% · Strict</option></select></label>
+              <label className="form-group"><span className="form-label">Answer style</span><select className="form-input" value={preferences.answerStyle} onChange={(event) => updatePreference('answerStyle', event.target.value)}><option value="concise">Concise and decision-ready</option><option value="detailed">Detailed with full context</option></select></label>
+              <label className="form-group"><span className="form-label">Minimum confidence threshold</span><select className="form-input" value={preferences.minimumConfidence} onChange={(event) => updatePreference('minimumConfidence', event.target.value)}><option value="0.6">60% · Exploratory</option><option value="0.75">75% · Recommended</option><option value="0.9">90% · Strict</option></select></label>
             </div>
             <div className="settings-toggles">
-              <ToggleRow label="Always show source evidence" description="Keep document passages visible alongside every substantive answer." checked={settings.showEvidence} onChange={(value) => updateSetting('showEvidence', value)} />
-              <ToggleRow label="Include historical context" description="Explain when a relevant rule has been superseded by a newer source." checked={settings.includeHistorical} onChange={(value) => updateSetting('includeHistorical', value)} />
+              <ToggleRow label="Always show source evidence" description="Keep document passages visible alongside every substantive answer." checked={preferences.showEvidence} onChange={(value) => updatePreference('showEvidence', value)} />
+              <ToggleRow label="Include historical context" description="Explain when a relevant rule has been superseded by a newer source." checked={preferences.includeHistorical} onChange={(value) => updatePreference('includeHistorical', value)} />
             </div>
           </section>
 
           <section id="knowledge-base" className="dashboard-section-card settings-card">
             <div className="settings-card-heading"><div><h2>Knowledge base</h2><p>Control which approved sources can influence your answers.</p></div><span className="settings-icon">▣</span></div>
             <div className="knowledge-status"><span className="status-dot" /><div><strong>Knowledge base synchronized</strong><p>1,420 documents · Last indexed today at 09:15</p></div><span className="badge-status badge-active">Healthy</span></div>
-            <div className="settings-toggles"><ToggleRow label="Prioritize active documents only" description="Exclude drafts and archived sources from authoritative retrieval." checked={settings.activeOnly} onChange={(value) => updateSetting('activeOnly', value)} /></div>
+            <div className="settings-toggles"><ToggleRow label="Prioritize active documents only" description="Exclude drafts and archived sources from authoritative retrieval." checked={preferences.activeOnly} onChange={(value) => updatePreference('activeOnly', value)} /></div>
             <a className="settings-link" href="/dashboard/circulars">Manage circulars and document status <span>→</span></a>
           </section>
 
           <section id="notifications" className="dashboard-section-card settings-card">
             <div className="settings-card-heading"><div><h2>Notifications</h2><p>Choose which workspace events should reach your inbox.</p></div><span className="settings-icon">♧</span></div>
             <div className="settings-toggles">
-              <ToggleRow label="Query review alerts" description="Notify me when a query needs manual review or has insufficient evidence." checked={settings.queryAlerts} onChange={(value) => updateSetting('queryAlerts', value)} />
-              <ToggleRow label="Document ingestion updates" description="Notify me when a document finishes indexing or needs attention." checked={settings.ingestionAlerts} onChange={(value) => updateSetting('ingestionAlerts', value)} />
-              <ToggleRow label="Weekly workspace digest" description="Receive a summary of searches, citations, and unresolved conflicts." checked={settings.weeklyDigest} onChange={(value) => updateSetting('weeklyDigest', value)} />
+              <ToggleRow label="Query review alerts" description="Notify me when a query needs manual review or has insufficient evidence." checked={preferences.queryAlerts} onChange={(value) => updatePreference('queryAlerts', value)} />
+              <ToggleRow label="Document ingestion updates" description="Notify me when a document finishes indexing or needs attention." checked={preferences.ingestionAlerts} onChange={(value) => updatePreference('ingestionAlerts', value)} />
+              <ToggleRow label="Weekly workspace digest" description="Receive a summary of searches, citations, and unresolved conflicts." checked={preferences.weeklyDigest} onChange={(value) => updatePreference('weeklyDigest', value)} />
             </div>
           </section>
 

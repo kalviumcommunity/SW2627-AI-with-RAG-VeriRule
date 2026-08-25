@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const metrics = [
   { title: 'Total Circulars', value: '1,420', sub: '+12 this week', icon: '📜' },
@@ -53,12 +54,15 @@ const authorities = [
 ]
 
 export default function DashboardPage() {
+  const { user } = useAuth()
+  const firstName = user.name ? user.name.split(' ')[0] : 'User'
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
       {/* ── Welcome ──────────────────────────────────────────────────── */}
       <div className="dashboard-welcome">
-        <h1>Welcome back, Alex</h1>
+        <h1>Welcome back, {firstName}</h1>
         <p>Here's an overview of your regulatory compliance workspace.</p>
       </div>
 
