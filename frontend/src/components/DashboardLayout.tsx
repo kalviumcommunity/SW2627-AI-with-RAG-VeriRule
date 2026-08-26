@@ -74,6 +74,17 @@ export default function DashboardLayout() {
           <div className="sidebar-group-label">Governance</div>
 
           <Link
+            to="/dashboard/rule-verifier"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/rule-verifier') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">🎯</span>
+              <span>Rule Verifier</span>
+            </div>
+            <span className="sidebar-badge" style={{ background: '#dcfce7', color: '#15803d' }}>New</span>
+          </Link>
+
+          <Link
             to="/dashboard/audit-trail"
             className={`sidebar-nav-item ${path.startsWith('/dashboard/audit-trail') ? 'active' : ''}`}
           >
@@ -94,6 +105,16 @@ export default function DashboardLayout() {
           </Link>
 
           <div className="sidebar-group-label">System</div>
+
+          <Link
+            to="/dashboard/documents"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/documents') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">📁</span>
+              <span>Document Repository</span>
+            </div>
+          </Link>
 
           <Link
             to="/dashboard/settings"

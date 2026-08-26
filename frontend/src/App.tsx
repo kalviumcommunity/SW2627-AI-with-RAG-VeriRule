@@ -8,6 +8,8 @@ import DashboardPage from './pages/DashboardPage'
 import CircularsPage from './pages/CircularsPage'
 import QueryEnginePage from './pages/QueryEnginePage'
 import AuditTrailPage from './pages/AuditTrailPage'
+import RuleVerifierPage from './pages/RuleVerifierPage'
+import DocumentsPage from './pages/DocumentsPage'
 import SettingsPage from './pages/SettingsPage'
 
 function App() {
@@ -23,8 +25,10 @@ function App() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardPage />} />
             <Route path="circulars" element={<CircularsPage />} />
+            <Route path="rule-verifier" element={<RuleVerifierPage />} />
             <Route path="query-engine" element={<QueryEnginePage />} />
             <Route path="audit-trail" element={<AuditTrailPage />} />
+            <Route path="documents" element={<DocumentsPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
@@ -35,5 +39,6 @@ function App() {
 }
 
 export default App
+
 
 
