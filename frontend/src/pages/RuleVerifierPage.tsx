@@ -147,11 +147,13 @@ export default function RuleVerifierPage() {
   const [showCertificate, setShowCertificate] = useState(false)
   const [certificateHash, setCertificateHash] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
+  const [customSearchError, setCustomSearchError] = useState('')
 
   const handleSelectScenario = (scen: TransactionScenario) => {
     setSelectedScenario(scen)
     setCustomSearch('')
     setCheckedRequirements({})
+    setCustomSearchError('')
   }
 
   const toggleCheck = (req: string) => {
@@ -159,6 +161,28 @@ export default function RuleVerifierPage() {
   }
 
   const allChecked = selectedScenario.activeRule.keyRequirements.every((r) => checkedRequirements[r])
+
+  const handleCustomVerify = () => {
+    const query = customSearch.trim().toLowerCase()
+    if (!query) return
+
+    const queryTerms = query.split(/\s+/).filter((term) => term.length > 3)
+    const matchingScenario = PRESET_SCENARIOS
+      .map((scenario) => {
+        const searchableText = `${scenario.title} ${scenario.category} ${scenario.query}`.toLowerCase()
+        const score = queryTerms.filter((term) => searchableText.includes(term)).length
+        return { scenario, score }
+      })
+      .sort((left, right) => right.score - left.score)[0]
+
+    if (!matchingScenario || matchingScenario.score === 0) {
+      setCustomSearchError('No indexed scenario matches these transaction details. Select a supported scenario or refine your search.')
+      return
+    }
+
+    handleSelectScenario(matchingScenario.scenario)
+    setCustomSearchError('')
+  }
 
   const generateCertificate = async () => {
     setIsVerifying(true)
@@ -277,15 +301,13 @@ export default function RuleVerifierPage() {
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => {
-              if (customSearch.trim()) {
-                // Find matching or switch
-              }
-            }}
+            onClick={handleCustomVerify}
+            disabled={!customSearch.trim()}
           >
             Verify Transaction Rule →
           </button>
         </div>
+        {customSearchError && <p className="verifier-search-error" role="alert">{customSearchError}</p>}
       </div>
 
       {/* ── CORE CONFLICT RESOLUTION DUAL CARDS ─────────────────────── */}
@@ -332,12 +354,10 @@ export default function RuleVerifierPage() {
               type="button"
               className="btn btn-primary btn-full"
               onClick={generateCertificate}
-              disabled={isVerifying}
+              disabled={isVerifying || !allChecked}
             >
               {isVerifying
                 ? 'Generating Verification Signature...'
-                : allChecked
-                ? 'Generate Decision Proof Certificate →'
                 : 'Generate Decision Proof Certificate →'}
             </button>
             <small style={{ color: 'var(--text-muted)', fontSize: '0.76rem', display: 'block', textAlign: 'center', marginTop: '0.35rem' }}>

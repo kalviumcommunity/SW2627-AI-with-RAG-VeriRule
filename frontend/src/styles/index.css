@@ -2252,6 +2252,13 @@ footer {
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+.verifier-search-error {
+  margin-top: 0.55rem;
+  color: #b91c1c;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
 .rule-cards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
