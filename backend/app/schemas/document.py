@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import StrEnum
-
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DocumentStatus(StrEnum):
@@ -11,15 +10,26 @@ class DocumentStatus(StrEnum):
     DRAFT = "draft"
 
 
+class DocumentCategory(StrEnum):
+    MASTER_DIRECTION = "Master Direction"
+    CIRCULAR = "Circular"
+    INTERNAL_AUDIT = "Internal Audit Report"
+    REGULATORY_UPDATE = "Regulatory Update"
+
+
 class DocumentSummary(BaseModel):
     document_id: str
     title: str
     document_type: str
-    status: DocumentStatus
-    issue_date: datetime | None = None
-    effective_date: datetime | None = None
-    version: str | None = None
+    status: DocumentStatus = DocumentStatus.ACTIVE
+    category: str = "Master Direction"
     authority: str | None = None
+    issue_date: str | None = None
+    effective_date: str | None = None
+    version: str | None = None
+    chunk_count: int = 1
+    supersedes_id: str | None = None
+    rules_count: int = 2
 
 
 class DocumentUploadResponse(BaseModel):
@@ -27,3 +37,4 @@ class DocumentUploadResponse(BaseModel):
     filename: str
     status: str
     message: str
+    summary: DocumentSummary | None = None
