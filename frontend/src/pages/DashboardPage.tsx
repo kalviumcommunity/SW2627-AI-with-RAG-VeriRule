@@ -1,50 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-
-const metrics = [
-  { title: 'Total Circulars', value: '1,420', sub: '+12 this week', icon: '📜' },
-  { title: 'Active Rules', value: '1,278', sub: 'Enforced by engine', icon: '✓' },
-  { title: 'Superseded', value: '142', sub: 'Resolved conflicts', icon: '⚡' },
-  { title: 'Citations', value: '12,850', sub: 'Source-verified', icon: '🔍' },
-]
-
-const recentCirculars = [
-  {
-    id: 'RBI/2023-24/108',
-    title: 'Master Direction on Cyber Security Framework for Financial Entities',
-    authority: 'RBI',
-    status: 'Active' as const,
-    date: '2023-11-07',
-  },
-  {
-    id: 'RBI/2021-22/15',
-    title: 'Master Direction – Digital Payment Security Controls in Banks',
-    authority: 'RBI',
-    status: 'Active' as const,
-    date: '2021-02-18',
-  },
-  {
-    id: 'SEBI/HO/MIRSD/2022/101',
-    title: 'Framework for Cyber Security and Cyber Resilience for Stock Brokers',
-    authority: 'SEBI',
-    status: 'Active' as const,
-    date: '2022-07-20',
-  },
-  {
-    id: 'BCBS/D516',
-    title: 'Principles for Operational Resilience in Commercial Banks',
-    authority: 'Basel Committee',
-    status: 'Active' as const,
-    date: '2021-03-31',
-  },
-  {
-    id: 'RBI/2016-17/38',
-    title: 'Cyber Security Framework in Banks (Baseline Guidance)',
-    authority: 'RBI',
-    status: 'Superseded' as const,
-    date: '2016-06-02',
-  },
-]
+import { fetchDocuments, DocumentSummary } from '../services/documentService'
 
 const authorities = [
   { name: 'Reserve Bank of India (RBI)', pct: 44, color: '#4f46e5' },
@@ -53,9 +10,111 @@ const authorities = [
   { name: 'Insurance Regulatory (IRDAI)', pct: 9, color: '#d97706' },
 ]
 
+interface RiskCell {
+  category: string
+  label: string
+  activeRules: number
+  supersededRules: number
+  riskLevel: 'low' | 'medium' | 'high'
+  scenario: string
+}
+
+const RISK_HEATMAP: RiskCell[] = [
+  {
+    category: 'Cyber Security & IT Risk',
+    label: 'Cyber Security',
+    activeRules: 8,
+    supersededRules: 4,
+    riskLevel: 'high',
+    scenario: '24x7 Security Operations Centre (SOC) Infrastructure',
+  },
+  {
+    category: 'Digital Payments',
+    label: 'Digital Payments',
+    activeRules: 6,
+    supersededRules: 1,
+    riskLevel: 'medium',
+    scenario: 'Digital Payment Beneficiary Transfer (₹5,00,000)',
+  },
+  {
+    category: 'Market Infrastructure',
+    label: 'Market Infra',
+    activeRules: 11,
+    supersededRules: 0,
+    riskLevel: 'low',
+    scenario: 'Stock Broker Trade Authentication & Log Storage',
+  },
+  {
+    category: 'Capital & Risk Governance',
+    label: 'Capital Risk',
+    activeRules: 5,
+    supersededRules: 0,
+    riskLevel: 'low',
+    scenario: 'Operational Resilience ICT Recovery Assessment',
+  },
+  {
+    category: 'Internal Risk Governance',
+    label: 'Internal Audit',
+    activeRules: 3,
+    supersededRules: 0,
+    riskLevel: 'low',
+    scenario: 'Internal Audit SOC Coverage',
+  },
+  {
+    category: 'KYC & AML Compliance',
+    label: 'KYC / AML',
+    activeRules: 4,
+    supersededRules: 2,
+    riskLevel: 'medium',
+    scenario: 'High-value customer onboarding KYC',
+  },
+]
+
+const getRiskColor = (level: string) => {
+  switch (level) {
+    case 'high':
+      return { bg: '#fef2f2', border: '#fecaca', text: '#991b1b', dot: '#ef4444' }
+    case 'medium':
+      return { bg: '#fffbeb', border: '#fef3c7', text: '#92400e', dot: '#f59e0b' }
+    case 'low':
+      return { bg: '#ecfdf5', border: '#a7f3d0', text: '#065f46', dot: '#10b981' }
+    default:
+      return { bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', dot: '#9ca3af' }
+  }
+}
+
 export default function DashboardPage() {
   const { user } = useAuth()
   const firstName = user.name ? user.name.split(' ')[0] : 'User'
+  const [documents, setDocuments] = useState<DocumentSummary[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadDocs = async () => {
+      try {
+        const data = await fetchDocuments()
+        setDocuments(data)
+      } catch {
+        // fallback to empty
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadDocs()
+  }, [])
+
+  // Compute live metrics from document repository
+  const totalDocs = documents.length
+  const activeCount = documents.filter((d) => d.status === 'active').length
+  const supersededCount = documents.filter((d) => d.status === 'superseded').length
+  const totalChunks = documents.reduce((acc, d) => acc + d.chunk_count, 0)
+
+  const liveMetrics = [
+    { title: 'Indexed Documents', value: loading ? '...' : String(totalDocs), sub: 'In vector repository', icon: '📜' },
+    { title: 'Active Rules', value: loading ? '...' : String(activeCount), sub: 'Currently enforced', icon: '✓' },
+    { title: 'Superseded', value: loading ? '...' : String(supersededCount), sub: 'Historical conflicts', icon: '⚡' },
+    { title: 'Vector Chunks', value: loading ? '...' : String(totalChunks), sub: 'Embedded passages', icon: '🔍' },
+  ]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -66,9 +125,9 @@ export default function DashboardPage() {
         <p>Here's an overview of your regulatory compliance workspace.</p>
       </div>
 
-      {/* ── Metrics ──────────────────────────────────────────────────── */}
+      {/* ── Live Metrics ─────────────────────────────────────────────── */}
       <div className="metrics-grid">
-        {metrics.map((m) => (
+        {liveMetrics.map((m) => (
           <div key={m.title} className="metric-card">
             <div className="metric-header">
               <span className="metric-title">{m.title}</span>
@@ -78,6 +137,77 @@ export default function DashboardPage() {
             <div className="metric-sub">{m.sub}</div>
           </div>
         ))}
+      </div>
+
+      {/* ── Compliance Risk Heatmap ──────────────────────────────────── */}
+      <div className="dashboard-section-card" style={{ marginBottom: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div>
+            <h2 className="section-card-title" style={{ margin: '0 0 0.15rem 0' }}>Compliance Risk Heatmap</h2>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              At-a-glance compliance exposure by transaction category
+            </span>
+          </div>
+          <Link to="/dashboard/rule-verifier" className="btn btn-ghost btn-sm">
+            Open Rule Verifier →
+          </Link>
+        </div>
+
+        <div className="risk-heatmap-grid">
+          {RISK_HEATMAP.map((cell) => {
+            const colors = getRiskColor(cell.riskLevel)
+            return (
+              <Link
+                key={cell.category}
+                to="/dashboard/rule-verifier"
+                className="risk-heatmap-cell"
+                style={{
+                  background: colors.bg,
+                  borderColor: colors.border,
+                }}
+              >
+                <div className="risk-cell-header">
+                  <span className="risk-cell-label">{cell.label}</span>
+                  <span className="risk-level-dot" style={{ background: colors.dot }} />
+                </div>
+                <div className="risk-cell-stats">
+                  <div className="risk-stat">
+                    <span className="risk-stat-value" style={{ color: '#10b981' }}>{cell.activeRules}</span>
+                    <span className="risk-stat-label">Active</span>
+                  </div>
+                  <div className="risk-stat">
+                    <span className="risk-stat-value" style={{ color: cell.supersededRules > 0 ? '#ef4444' : '#9ca3af' }}>
+                      {cell.supersededRules}
+                    </span>
+                    <span className="risk-stat-label">Superseded</span>
+                  </div>
+                </div>
+                <div className="risk-level-badge" style={{ color: colors.text, background: colors.border }}>
+                  {cell.riskLevel === 'high'
+                    ? '⚠ Conflict Detected'
+                    : cell.riskLevel === 'medium'
+                    ? '⏳ Pending Review'
+                    : '✓ Compliant'}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+
+        <div className="heatmap-legend">
+          <div className="legend-item">
+            <span className="legend-dot" style={{ background: '#10b981' }} />
+            <span>Compliant — No unresolved conflicts</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot" style={{ background: '#f59e0b' }} />
+            <span>Pending Review — Recent regulatory updates</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot" style={{ background: '#ef4444' }} />
+            <span>Conflict Detected — Active + superseded rules coexist</span>
+          </div>
+        </div>
       </div>
 
       {/* ── Two Column: Authority Coverage + Quick Access ─────────── */}
@@ -101,31 +231,49 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Circulars Quick Access */}
+        {/* Quick Access Cards */}
         <div className="dashboard-section-card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <h2 className="section-card-title">Circulars & Rules Engine</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.86rem', lineHeight: 1.55, marginBottom: '1rem' }}>
-              Browse indexed RBI, SEBI, and Basel Committee circulars. Track supersession links and inspect extracted compliance rules.
-            </p>
-            <div style={{ background: '#f9fafb', padding: '0.85rem 1rem', borderRadius: '8px', border: '1px solid #eaecf0', marginBottom: '1.25rem' }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-main)' }}>Automatic Conflict Resolution</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-                Master Directions automatically resolve superseded circulars with traceable source proof.
-              </div>
+            <h2 className="section-card-title">Quick Access</h2>
+            <div className="quick-access-links">
+              <Link to="/dashboard/rule-verifier" className="quick-access-item">
+                <span className="qa-icon">🎯</span>
+                <div>
+                  <strong>Rule Verifier</strong>
+                  <span>Verify transaction compliance & generate proof</span>
+                </div>
+              </Link>
+              <Link to="/dashboard/rule-timeline" className="quick-access-item">
+                <span className="qa-icon">📅</span>
+                <div>
+                  <strong>Rule Timeline</strong>
+                  <span>Trace supersession chains across directives</span>
+                </div>
+              </Link>
+              <Link to="/dashboard/query-engine" className="quick-access-item">
+                <span className="qa-icon">⚡</span>
+                <div>
+                  <strong>AI Query Engine</strong>
+                  <span>Natural language compliance search</span>
+                </div>
+              </Link>
+              <Link to="/dashboard/documents" className="quick-access-item">
+                <span className="qa-icon">📁</span>
+                <div>
+                  <strong>Document Repository</strong>
+                  <span>Upload & manage regulatory documents</span>
+                </div>
+              </Link>
             </div>
           </div>
-          <Link to="/dashboard/circulars" className="btn btn-primary" style={{ textAlign: 'center' }}>
-            Open Circulars & Rules →
-          </Link>
         </div>
       </div>
 
-      {/* ── Recent Circulars Table ────────────────────────────────────── */}
+      {/* ── Recently Indexed Documents (live) ──────────────────────── */}
       <div className="dashboard-section-card" style={{ marginBottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
-          <h2 className="section-card-title" style={{ margin: 0 }}>Recently Indexed Circulars</h2>
-          <Link to="/dashboard/circulars" className="btn btn-ghost btn-sm">
+          <h2 className="section-card-title" style={{ margin: 0 }}>Recently Indexed Documents</h2>
+          <Link to="/dashboard/documents" className="btn btn-ghost btn-sm">
             View all →
           </Link>
         </div>
@@ -133,7 +281,7 @@ export default function DashboardPage() {
           <table className="circulars-table">
             <thead>
               <tr>
-                <th>Circular ID</th>
+                <th>Document ID</th>
                 <th>Title</th>
                 <th>Authority</th>
                 <th>Status</th>
@@ -141,21 +289,28 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {recentCirculars.map((row) => (
-                <tr key={row.id}>
+              {(loading ? [] : documents.slice(0, 5)).map((doc) => (
+                <tr key={doc.document_id}>
                   <td style={{ fontWeight: 600, fontFamily: "'JetBrains Mono', monospace", fontSize: '0.82rem', color: '#4f46e5' }}>
-                    {row.id}
+                    {doc.document_id}
                   </td>
-                  <td style={{ fontWeight: 500 }}>{row.title}</td>
-                  <td style={{ color: 'var(--text-muted)' }}>{row.authority}</td>
+                  <td style={{ fontWeight: 500 }}>{doc.title}</td>
+                  <td style={{ color: 'var(--text-muted)' }}>{doc.authority || 'N/A'}</td>
                   <td>
-                    <span className={`badge-status ${row.status === 'Active' ? 'badge-active' : 'badge-superseded'}`}>
-                      {row.status}
+                    <span className={`badge-status ${doc.status === 'active' ? 'badge-active' : 'badge-superseded'}`}>
+                      {doc.status}
                     </span>
                   </td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '0.84rem' }}>{row.date}</td>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '0.84rem' }}>{doc.effective_date || 'N/A'}</td>
                 </tr>
               ))}
+              {loading && (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                    Loading document inventory...
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
