@@ -9,6 +9,7 @@ import CircularsPage from './pages/CircularsPage'
 import QueryEnginePage from './pages/QueryEnginePage'
 import AuditTrailPage from './pages/AuditTrailPage'
 import RuleVerifierPage from './pages/RuleVerifierPage'
+import RuleTimelinePage from './pages/RuleTimelinePage'
 import DocumentsPage from './pages/DocumentsPage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -26,6 +27,7 @@ function App() {
             <Route index element={<DashboardPage />} />
             <Route path="circulars" element={<CircularsPage />} />
             <Route path="rule-verifier" element={<RuleVerifierPage />} />
+            <Route path="rule-timeline" element={<RuleTimelinePage />} />
             <Route path="query-engine" element={<QueryEnginePage />} />
             <Route path="audit-trail" element={<AuditTrailPage />} />
             <Route path="documents" element={<DocumentsPage />} />
@@ -39,6 +41,3 @@ function App() {
 }
 
 export default App
-
-
-

@@ -85,6 +85,16 @@ export default function DashboardLayout() {
           </Link>
 
           <Link
+            to="/dashboard/rule-timeline"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/rule-timeline') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">📅</span>
+              <span>Rule Timeline</span>
+            </div>
+          </Link>
+
+          <Link
             to="/dashboard/audit-trail"
             className={`sidebar-nav-item ${path.startsWith('/dashboard/audit-trail') ? 'active' : ''}`}
           >
