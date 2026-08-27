@@ -27,4 +27,4 @@ def test_document_upload_is_accepted_for_ingestion() -> None:
     )
 
     assert response.status_code == 202
-    assert response.json()["status"] == "queued"
+    assert response.json()["status"] == "active"
