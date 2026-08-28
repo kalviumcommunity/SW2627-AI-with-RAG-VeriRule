@@ -1,6 +1,6 @@
-from datetime import datetime
 from enum import StrEnum
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel
 
 
 class DocumentStatus(StrEnum):
@@ -38,3 +38,12 @@ class DocumentUploadResponse(BaseModel):
     status: str
     message: str
     summary: DocumentSummary | None = None
+
+
+class DocumentChunkReference(BaseModel):
+    chunk_id: str
+    passage: str
+    section: str | None = None
+    page: int | None = None
+    status: str
+    effective_date: str | None = None

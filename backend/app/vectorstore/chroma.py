@@ -42,6 +42,26 @@ class ChromaVectorStore:
             metadatas=[self._metadata_for(chunk) for chunk in chunks],
         )
 
+    def delete_document(self, document_id: str) -> None:
+        self.collection.delete(where={"document_id": document_id})
+
+    def get_document_chunks(self, document_id: str) -> list[dict[str, Any]]:
+        result = self.collection.get(
+            where={"document_id": document_id},
+            include=["documents", "metadatas"],
+        )
+        ids = result.get("ids", [])
+        documents = result.get("documents", []) or []
+        metadatas = result.get("metadatas", []) or []
+        return [
+            {
+                "chunk_id": chunk_id,
+                "text": documents[index],
+                "metadata": metadatas[index] or {},
+            }
+            for index, chunk_id in enumerate(ids)
+        ]
+
     def search(
         self,
         query: str,

@@ -3,6 +3,8 @@ import {
   fetchDocuments,
   uploadDocument,
   deleteDocument,
+  fetchDocumentChunks,
+  DocumentChunkReference,
   DocumentSummary,
 } from '../services/documentService'
 
@@ -16,6 +18,9 @@ export default function DocumentsPage() {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadMessage, setUploadMessage] = useState<string | null>(null)
   const [dragActive, setDragActive] = useState(false)
+  const [documentChunks, setDocumentChunks] = useState<DocumentChunkReference[]>([])
+  const [chunksLoading, setChunksLoading] = useState(false)
+  const [chunksError, setChunksError] = useState<string | null>(null)
 
   const loadDocs = async () => {
     setLoading(true)
@@ -35,6 +40,21 @@ export default function DocumentsPage() {
   useEffect(() => {
     loadDocs()
   }, [searchQuery, authorityFilter])
+
+  useEffect(() => {
+    if (!selectedDoc) {
+      setDocumentChunks([])
+      setChunksError(null)
+      return
+    }
+
+    setChunksLoading(true)
+    setChunksError(null)
+    fetchDocumentChunks(selectedDoc.document_id)
+      .then(setDocumentChunks)
+      .catch(() => setChunksError('Unable to load indexed passages from the vector repository.'))
+      .finally(() => setChunksLoading(false))
+  }, [selectedDoc])
 
   const handleFileUpload = async (files: FileList | File[]) => {
     if (!files || files.length === 0) return
@@ -364,13 +384,22 @@ export default function DocumentsPage() {
               )}
 
               <div className="drawer-section">
-                <h4>Extracted Vector Passages (ChromaDB Samples)</h4>
-                <div className="passage-box" style={{ marginBottom: '0.65rem' }}>
-                  <strong>Passage Chunk #1:</strong> “Entities must maintain 24x7 SOC continuous telemetry, hardware-backed cryptographic MFA, and mandatory cooling-off periods for all core financial transactions.”
-                </div>
-                <div className="passage-box">
-                  <strong>Passage Chunk #2:</strong> “Authentication and order audit logs shall be stored on Write-Once-Read-Many (WORM) media for 7 years minimum.”
-                </div>
+                <h4>Extracted Vector Passages</h4>
+                {chunksLoading ? (
+                  <div className="audit-loading-state"><div className="spinner" /><p>Loading indexed passages...</p></div>
+                ) : chunksError ? (
+                  <div className="audit-empty-state"><h3>Passages unavailable</h3><p>{chunksError}</p></div>
+                ) : documentChunks.length === 0 ? (
+                  <div className="audit-empty-state"><h3>No indexed passages</h3><p>This document has metadata but no stored vector chunks.</p></div>
+                ) : (
+                  documentChunks.map((chunk) => (
+                    <div className="passage-box" style={{ marginBottom: '0.65rem' }} key={chunk.chunk_id}>
+                      <strong>{chunk.chunk_id}</strong>
+                      <p style={{ margin: '0.35rem 0 0' }}>{chunk.passage}</p>
+                      <small>{chunk.section ? `Section ${chunk.section}` : 'Unsectioned'}{chunk.page ? ` · Page ${chunk.page}` : ''}</small>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 

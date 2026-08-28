@@ -60,3 +60,34 @@ def test_chroma_persists_chunks_and_supports_metadata_filter(tmp_path: Path) -> 
     assert len(results) == 1
     assert results[0]["chunk_id"] == "chunk-current"
     assert results[0]["metadata"]["page"] == 5
+
+
+def test_chroma_deletes_all_chunks_for_document(tmp_path: Path) -> None:
+    store = ChromaVectorStore(
+        directory=str(tmp_path / "chroma"),
+        collection_name="test_documents",
+        embedding_function=TestEmbeddingFunction(),
+    )
+    store.upsert_chunks([
+        DocumentChunk(
+            chunk_id="chunk-one",
+            document_id="doc-one",
+            text="Current requirement text.",
+            title="Document One",
+            document_type="circular",
+            status="active",
+        ),
+        DocumentChunk(
+            chunk_id="chunk-two",
+            document_id="doc-two",
+            text="Another requirement text.",
+            title="Document Two",
+            document_type="circular",
+            status="active",
+        ),
+    ])
+
+    store.delete_document("doc-one")
+
+    assert store.count == 1
+    assert store.search("Current requirement text.") == []
