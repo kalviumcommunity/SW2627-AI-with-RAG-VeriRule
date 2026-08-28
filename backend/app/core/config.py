@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     upload_directory: str = "./data/uploads"
     chroma_directory: str = "./data/chroma"
     chroma_collection: str = "verirule_documents"
+    retrieval_distance_threshold: float = 0.35
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

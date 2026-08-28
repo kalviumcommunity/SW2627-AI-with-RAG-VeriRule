@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 from uuid import uuid4
 
+from app.core.config import get_settings
 from app.schemas.audit import AuditCategory, AuditEventCreate, AuditSeverity
 from app.schemas.query import QueryRequest, QueryResponse, SourceReference
 from app.services.audit_service import get_audit_service
@@ -66,7 +67,9 @@ class QueryService:
     @staticmethod
     def _retrieve(question: str) -> list[dict[str, object]]:
         try:
-            return get_vector_store().search(question, n_results=5, where={"status": "active"})
+            results = get_vector_store().search(question, n_results=5, where={"status": "active"})
+            threshold = get_settings().retrieval_distance_threshold
+            return [result for result in results if float(result["distance"]) <= threshold]
         except Exception:
             return []
 
