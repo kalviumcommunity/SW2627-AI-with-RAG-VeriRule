@@ -7,7 +7,14 @@ from uuid import uuid4
 
 from fastapi import UploadFile
 
-from app.schemas.document import DocumentStatus, DocumentSummary, DocumentUploadResponse
+from app.schemas.chunk import DocumentChunk
+from app.schemas.document import (
+    DocumentChunkReference,
+    DocumentStatus,
+    DocumentSummary,
+    DocumentUploadResponse,
+)
+from app.vectorstore.chroma import ChromaVectorStore, get_vector_store
 
 DOCUMENTS_FILE = Path("data/documents.json")
 
@@ -15,8 +22,9 @@ DOCUMENTS_FILE = Path("data/documents.json")
 class DocumentService:
     """Application boundary for extraction, chunking, metadata, vector embedding, and inventory."""
 
-    def __init__(self, storage_path: Path = DOCUMENTS_FILE) -> None:
+    def __init__(self, storage_path: Path = DOCUMENTS_FILE, vector_store: ChromaVectorStore | None = None) -> None:
         self.storage_path = storage_path
+        self.vector_store = vector_store or get_vector_store()
         self.storage_path.parent.mkdir(parents=True, exist_ok=True)
         self._documents: List[DocumentSummary] = self._load_documents()
 
@@ -150,6 +158,28 @@ class DocumentService:
 
         return result
 
+    def list_chunks(self, document_id: str) -> List[DocumentChunkReference]:
+        if not any(document.document_id == document_id for document in self._documents):
+            return []
+
+        return [
+            DocumentChunkReference(
+                chunk_id=str(result["chunk_id"]),
+                passage=str(result["text"]),
+                section=str(result["metadata"]["section"])
+                if result["metadata"].get("section")
+                else None,
+                page=int(result["metadata"]["page"])
+                if result["metadata"].get("page")
+                else None,
+                status=str(result["metadata"].get("status", "active")),
+                effective_date=str(result["metadata"]["effective_date"])
+                if result["metadata"].get("effective_date")
+                else None,
+            )
+            for result in self.vector_store.get_document_chunks(document_id)
+        ]
+
     async def ingest(self, file: UploadFile) -> DocumentUploadResponse:
         content_bytes = await file.read()
         raw_text = content_bytes.decode("utf-8", errors="ignore")
@@ -184,6 +214,27 @@ class DocumentService:
         )
 
         self._documents.insert(0, summary)
+        passages = [passage.strip() for passage in re.split(r"\n\s*\n", raw_text) if passage.strip()]
+        if not passages:
+            passages = [raw_text.strip() or filename]
+        chunks = [
+            DocumentChunk(
+                chunk_id=f"{doc_id}/chunk-{index + 1}",
+                document_id=doc_id,
+                text=passage,
+                title=summary.title,
+                document_type=summary.document_type,
+                status=summary.status.value,
+                issue_date=datetime.fromisoformat(summary.issue_date),
+                effective_date=datetime.fromisoformat(summary.effective_date),
+                version=summary.version,
+                authority=summary.authority,
+                section=str(index + 1),
+            )
+            for index, passage in enumerate(passages)
+        ]
+        summary.chunk_count = len(chunks)
+        self.vector_store.upsert_chunks(chunks)
         self._save_documents()
 
         return DocumentUploadResponse(
@@ -198,6 +249,7 @@ class DocumentService:
         initial_len = len(self._documents)
         self._documents = [d for d in self._documents if d.document_id != document_id]
         if len(self._documents) < initial_len:
+            self.vector_store.delete_document(document_id)
             self._save_documents()
             return True
         return False

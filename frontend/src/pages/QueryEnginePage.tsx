@@ -182,8 +182,8 @@ export default function QueryEnginePage() {
               <span className="source-count">{result.sources.length} sources</span>
             </div>
             <div className="source-list">
-              {result.sources.map((source) => (
-                <article key={source.document_id} className={`source-card ${source.status.toLowerCase() === 'superseded' ? 'source-card-old' : ''}`}>
+              {result.sources.map((source, index) => (
+                <article key={`${source.document_id}-${source.section ?? 'source'}-${source.page ?? index}`} className={`source-card ${source.status.toLowerCase() === 'superseded' ? 'source-card-old' : ''}`}>
                   <div className="source-card-topline"><span className="source-id">{source.document_id}</span><span className={`badge-status ${source.status.toLowerCase() === 'active' ? 'badge-active' : 'badge-superseded'}`}>{source.status}</span></div>
                   <h3>{source.title}</h3>
                   <div className="source-meta"><span>{source.document_type}</span>{source.section && <span>{source.section}</span>}{source.page && <span>Page {source.page}</span>}</div>

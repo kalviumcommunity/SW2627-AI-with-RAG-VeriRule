@@ -25,6 +25,22 @@ export interface DocumentUploadResponse {
   summary?: DocumentSummary
 }
 
+export interface DocumentChunkReference {
+  chunk_id: string
+  passage: string
+  section?: string
+  page?: number
+  status: string
+  effective_date?: string
+}
+
+export async function fetchDocumentChunks(documentId: string): Promise<DocumentChunkReference[]> {
+  const res = await api.get<DocumentChunkReference[]>(
+    `/documents/${encodeURIComponent(documentId)}/chunks`,
+  )
+  return res.data
+}
+
 const FALLBACK_KEY = 'verirule_document_inventory_v1'
 
 function getLocalDocuments(): DocumentSummary[] {
