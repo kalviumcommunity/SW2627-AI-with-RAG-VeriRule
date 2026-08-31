@@ -114,6 +114,17 @@ export default function DashboardLayout() {
             </div>
           </Link>
 
+          <Link
+            to="/dashboard/chat"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/chat') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">💬</span>
+              <span>Compliance Chat</span>
+            </div>
+            <span className="sidebar-badge" style={{ background: '#ede9fe', color: '#7c3aed' }}>New</span>
+          </Link>
+
           <div className="sidebar-group-label">System</div>
 
           <Link

@@ -68,26 +68,35 @@ def test_chroma_deletes_all_chunks_for_document(tmp_path: Path) -> None:
         collection_name="test_documents",
         embedding_function=TestEmbeddingFunction(),
     )
-    store.upsert_chunks([
-        DocumentChunk(
-            chunk_id="chunk-one",
-            document_id="doc-one",
-            text="Current requirement text.",
-            title="Document One",
-            document_type="circular",
-            status="active",
-        ),
-        DocumentChunk(
-            chunk_id="chunk-two",
-            document_id="doc-two",
-            text="Another requirement text.",
-            title="Document Two",
-            document_type="circular",
-            status="active",
-        ),
-    ])
+
+    store.upsert_chunks(
+        [
+            DocumentChunk(
+                chunk_id="chunk-one",
+                document_id="doc-one",
+                text="Current requirement text.",
+                title="Document One",
+                document_type="circular",
+                status="active",
+            ),
+            DocumentChunk(
+                chunk_id="chunk-two",
+                document_id="doc-two",
+                text="Another requirement text.",
+                title="Document Two",
+                document_type="circular",
+                status="active",
+            ),
+        ]
+    )
 
     store.delete_document("doc-one")
 
     assert store.count == 1
-    assert store.search("Current requirement text.") == []
+
+    results = store.search("Current requirement text.")
+
+    assert all(
+        result["metadata"]["document_id"] != "doc-one"
+        for result in results
+    )

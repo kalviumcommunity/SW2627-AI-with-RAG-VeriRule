@@ -12,6 +12,7 @@ import RuleVerifierPage from './pages/RuleVerifierPage'
 import RuleTimelinePage from './pages/RuleTimelinePage'
 import DocumentsPage from './pages/DocumentsPage'
 import SettingsPage from './pages/SettingsPage'
+import ChatPage from './pages/ChatPage'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="audit-trail" element={<AuditTrailPage />} />
             <Route path="documents" element={<DocumentsPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="chat" element={<ChatPage />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>
