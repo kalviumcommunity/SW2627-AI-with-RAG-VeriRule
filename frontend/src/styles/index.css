@@ -2956,6 +2956,110 @@ footer {
   background: #eef2ff !important;
 }
 
+/* ─── Regulatory Impact Analyzer Styles ─────────────────────────── */
+.impact-analyzer-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.25rem;
+}
+
+.impact-card {
+  padding: 1.35rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.impact-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.dept-title-wrap {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.dept-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.dept-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 0.25rem 0;
+}
+
+.affected-systems-tag {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.gap-box {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.gap-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #c2410c;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.gap-box p {
+  font-size: 0.82rem;
+  color: #9a3412;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.action-items-section {
+  margin-bottom: 1rem;
+}
+
+.action-items-section h4 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem 0;
+}
+
+.dept-card-footer {
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.deadline-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4f46e5;
+  background: #eef2ff;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+
+
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMPLIANCE CHAT ASSISTANT — Full UI Style System
