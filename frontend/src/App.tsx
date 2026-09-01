@@ -10,9 +10,9 @@ import QueryEnginePage from './pages/QueryEnginePage'
 import AuditTrailPage from './pages/AuditTrailPage'
 import RuleVerifierPage from './pages/RuleVerifierPage'
 import RuleTimelinePage from './pages/RuleTimelinePage'
+import ImpactAnalyzerPage from './pages/ImpactAnalyzerPage'
 import DocumentsPage from './pages/DocumentsPage'
 import SettingsPage from './pages/SettingsPage'
-import ChatPage from './pages/ChatPage'
 
 function App() {
   return (
@@ -29,11 +29,11 @@ function App() {
             <Route path="circulars" element={<CircularsPage />} />
             <Route path="rule-verifier" element={<RuleVerifierPage />} />
             <Route path="rule-timeline" element={<RuleTimelinePage />} />
+            <Route path="impact-analyzer" element={<ImpactAnalyzerPage />} />
             <Route path="query-engine" element={<QueryEnginePage />} />
             <Route path="audit-trail" element={<AuditTrailPage />} />
             <Route path="documents" element={<DocumentsPage />} />
             <Route path="settings" element={<SettingsPage />} />
-            <Route path="chat" element={<ChatPage />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>

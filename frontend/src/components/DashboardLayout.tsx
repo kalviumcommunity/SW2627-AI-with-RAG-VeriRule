@@ -95,6 +95,17 @@ export default function DashboardLayout() {
           </Link>
 
           <Link
+            to="/dashboard/impact-analyzer"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/impact-analyzer') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">⚡</span>
+              <span>Impact Analyzer</span>
+            </div>
+            <span className="sidebar-badge" style={{ background: '#e0e7ff', color: '#3730a3' }}>New</span>
+          </Link>
+
+          <Link
             to="/dashboard/audit-trail"
             className={`sidebar-nav-item ${path.startsWith('/dashboard/audit-trail') ? 'active' : ''}`}
           >
