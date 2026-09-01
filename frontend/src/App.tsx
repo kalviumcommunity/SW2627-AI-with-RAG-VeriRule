@@ -14,6 +14,7 @@ import ImpactAnalyzerPage from './pages/ImpactAnalyzerPage'
 import ComplianceSimulatorPage from './pages/ComplianceSimulatorPage'
 import DocumentsPage from './pages/DocumentsPage'
 import SettingsPage from './pages/SettingsPage'
+import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="query-engine" element={<QueryEnginePage />} />
             <Route path="audit-trail" element={<AuditTrailPage />} />
             <Route path="documents" element={<DocumentsPage />} />
+            <Route path="analytics" element={<AnalyticsDashboardPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>

@@ -158,6 +158,21 @@ export default function DashboardLayout() {
             </div>
           </Link>
 
+          <div className="sidebar-group-label">Analytics</div>
+
+          <Link
+            to="/dashboard/analytics"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/analytics') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">📈</span>
+              <span>Analytics Dashboard</span>
+            </div>
+            <span className="sidebar-badge" style={{ background: '#dcfce7', color: '#15803d' }}>New</span>
+          </Link>
+
+          <div className="sidebar-group-label">System</div>
+
           <Link
             to="/dashboard/settings"
             className={`sidebar-nav-item ${path.startsWith('/dashboard/settings') ? 'active' : ''}`}
