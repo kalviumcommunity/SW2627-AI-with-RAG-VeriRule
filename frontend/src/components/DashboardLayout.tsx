@@ -106,6 +106,16 @@ export default function DashboardLayout() {
           </Link>
 
           <Link
+            to="/dashboard/simulator"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/simulator') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">🧪</span>
+              <span>Compliance Simulator</span>
+            </div>
+          </Link>
+
+          <Link
             to="/dashboard/audit-trail"
             className={`sidebar-nav-item ${path.startsWith('/dashboard/audit-trail') ? 'active' : ''}`}
           >
