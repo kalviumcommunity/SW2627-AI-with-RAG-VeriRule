@@ -58,3 +58,39 @@ def test_query_rejects_weak_retrieval_evidence(monkeypatch) -> None:
     assert response.status_code == 200
     assert response.json()["status"] == "insufficient_evidence"
     assert response.json()["sources"] == []
+
+
+def test_query_returns_actionable_recommendation(monkeypatch) -> None:
+    class StrongVectorStore:
+        def search(self, question: str, n_results: int, where: dict[str, str]) -> list[dict]:
+            return [
+                {
+                    "chunk_id": "good-match",
+                    "text": "Entities must maintain continuous 24x7 SOC monitoring and hardware-backed MFA.",
+                    "metadata": {
+                        "document_id": "RBI/2023-24/108",
+                        "title": "Master Direction on Cyber Security Framework for Financial Entities",
+                        "document_type": "Master Direction",
+                        "status": "active",
+                        "authority": "Reserve Bank of India",
+                        "section": "Section 3.1.2",
+                        "effective_date": "2023-11-07",
+                        "page": 12,
+                    },
+                    "distance": 0.12,
+                }
+            ]
+
+    monkeypatch.setattr(query_service, "get_vector_store", lambda: StrongVectorStore())
+
+    response = client.post(
+        "/queries",
+        json={"question": "What cyber security controls are required for our payment infrastructure?"},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "active_rule_verified"
+    assert body["risk_level"] in {"low", "medium", "high", "critical"}
+    assert "recommendation" in body
+    assert len(body["recommendation"]) > 20

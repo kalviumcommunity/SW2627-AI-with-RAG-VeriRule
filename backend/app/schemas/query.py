@@ -11,6 +11,7 @@ class SourceReference(BaseModel):
     document_id: str
     title: str
     document_type: str
+    authority: str | None = None
     section: str | None = None
     page: int | None = Field(default=None, ge=1)
     status: str
@@ -25,4 +26,7 @@ class QueryResponse(BaseModel):
     status: str
     sources: list[SourceReference] = Field(default_factory=list)
     confidence: float | None = Field(default=None, ge=0, le=1)
+    authority: str | None = None
+    risk_level: str | None = Field(default=None, pattern='^(low|medium|high|critical)$')
+    recommendation: str | None = None
     historical_context: str | None = None

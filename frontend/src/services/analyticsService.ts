@@ -106,7 +106,7 @@ export async function generateAnalyticsReport(
 /**
  * Export report as CSV
  */
-export async function downloadReportCSV(reportData: AnalyticsReportResponse): void {
+export function downloadReportCSV(reportData: AnalyticsReportResponse): void {
   const csv = convertReportToCSV(reportData)
   const blob = new Blob([csv], { type: 'text/csv' })
   const url = window.URL.createObjectURL(blob)

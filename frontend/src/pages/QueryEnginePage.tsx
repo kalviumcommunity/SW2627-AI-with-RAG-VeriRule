@@ -173,6 +173,15 @@ export default function QueryEnginePage() {
             ) : (
               <div className="current-rule"><span className="rule-check">✓</span><div><strong>Current rule</strong><p>{result.answer}</p></div></div>
             )}
+            {result.authority && (
+              <div className="historical-note"><span>🏛️</span><div><strong>Governing authority</strong><p>{result.authority}</p></div></div>
+            )}
+            {result.risk_level && (
+              <div className="historical-note"><span>⚠️</span><div><strong>Risk level</strong><p>{result.risk_level.toUpperCase()}</p></div></div>
+            )}
+            {result.recommendation && (
+              <div className="historical-note"><span>→</span><div><strong>Recommended action</strong><p>{result.recommendation}</p></div></div>
+            )}
             {result.historical_context && <div className="historical-note"><span>↗</span><div><strong>Historical context</strong><p>{result.historical_context}</p></div></div>}
           </div>
 
