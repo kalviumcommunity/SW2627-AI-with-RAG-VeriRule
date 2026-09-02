@@ -31,11 +31,10 @@ class QueryService:
 
     @staticmethod
     def _recommendation_for_source(primary_source: SourceReference, risk_level: str) -> str:
-        mandatory = primary_source.passage
         if risk_level == "critical":
             return (
                 "Immediate compliance action is required: verify the control owner, confirm supervisory approval, "
-                f"and document the control implementation before proceeding with the transaction or process. Evidence: {primary_source.document_id}."
+                f"and document the control implementation before proceeding. Evidence: {primary_source.document_id}."
             )
         if risk_level == "high":
             return (
@@ -56,8 +55,21 @@ class QueryService:
         start_time = time.time()
         query_id = str(uuid4())
 
-        retrieved = self._retrieve(request.question)
-        sources = [self._source_from_result(result) for result in retrieved]
+        active_retrieved, superseded_retrieved = self._retrieve_with_supersession(request.question)
+        sources = [self._source_from_result(result) for result in active_retrieved]
+
+        # Add superseded sources if relevant
+        superseded_sources = [self._source_from_result(result) for result in superseded_retrieved]
+        all_sources = sources + superseded_sources
+
+        historical_context = None
+        if superseded_sources:
+            sup = superseded_sources[0]
+            historical_context = (
+                f"⚡ Conflict Alert: Historical circular '{sup.document_id}' ({sup.title}) "
+                f"previously governed this topic but is SUPERSEDED by active directive '{sources[0].document_id if sources else 'current Master Direction'}'. "
+                f"Do NOT rely on historical guidance in {sup.document_id}."
+            )
 
         if not sources:
             answer = (
@@ -75,8 +87,8 @@ class QueryService:
             )
         else:
             primary_source = sources[0]
-            answer = f"The retrieved current rule states: {primary_source.passage}"
-            confidence = max(0.0, min(1.0, 1 - retrieved[0]["distance"]))
+            answer = f"The retrieved current active rule states: {primary_source.passage}"
+            confidence = max(0.0, min(1.0, 1 - active_retrieved[0]["distance"]))
             status = "active_rule_verified"
             severity = AuditSeverity.VERIFIED
             authority = primary_source.authority
@@ -100,7 +112,7 @@ class QueryService:
                 passage_text=sources[0].passage if sources else None,
                 section=sources[0].section if sources else None,
                 execution_time_ms=duration_ms,
-                details=f"Query evaluated with status '{status}' across indexed circular database.",
+                details=f"Query evaluated with status '{status}' across active and superseded circular database.",
             )
         )
 
@@ -109,21 +121,31 @@ class QueryService:
             question=request.question,
             answer=answer,
             status=status,
-            sources=sources,
+            sources=all_sources,
             confidence=confidence,
             authority=authority,
             risk_level=risk_level,
             recommendation=recommendation,
+            historical_context=historical_context,
         )
 
     @staticmethod
-    def _retrieve(question: str) -> list[dict[str, object]]:
+    def _retrieve_with_supersession(question: str) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
         try:
-            results = get_vector_store().search(question, n_results=5, where={"status": "active"})
+            vector_store = get_vector_store()
             threshold = get_settings().retrieval_distance_threshold
-            return [result for result in results if float(result["distance"]) <= threshold]
+
+            # Retrieve active documents
+            active_results = vector_store.search(question, n_results=5, where={"status": "active"})
+            filtered_active = [r for r in active_results if float(r["distance"]) <= threshold]
+
+            # Retrieve superseded documents for conflict resolution
+            superseded_results = vector_store.search(question, n_results=2, where={"status": "superseded"})
+            filtered_superseded = [r for r in superseded_results if float(r["distance"]) <= threshold + 0.15]
+
+            return filtered_active, filtered_superseded
         except Exception:
-            return []
+            return [], []
 
     @staticmethod
     def _source_from_result(result: dict[str, object]) -> SourceReference:
@@ -140,4 +162,3 @@ class QueryService:
             effective_date=datetime.fromisoformat(str(effective_date)) if effective_date else None,
             passage=str(result["text"]),
         )
-
