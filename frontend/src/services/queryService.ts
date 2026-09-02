@@ -18,6 +18,9 @@ export interface QueryResponse {
   status: string
   sources: SourceReference[]
   confidence: number | null
+  authority: string | null
+  risk_level: 'low' | 'medium' | 'high' | 'critical' | null
+  recommendation: string | null
   historical_context: string | null
 }
 
