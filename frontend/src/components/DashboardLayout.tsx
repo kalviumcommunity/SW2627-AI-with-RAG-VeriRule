@@ -116,6 +116,17 @@ export default function DashboardLayout() {
           </Link>
 
           <Link
+            to="/dashboard/reports"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/reports') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">📋</span>
+              <span>Compliance Reports</span>
+            </div>
+            <span className="sidebar-badge" style={{ background: '#dcfce7', color: '#15803d' }}>New</span>
+          </Link>
+
+          <Link
             to="/dashboard/audit-trail"
             className={`sidebar-nav-item ${path.startsWith('/dashboard/audit-trail') ? 'active' : ''}`}
           >
