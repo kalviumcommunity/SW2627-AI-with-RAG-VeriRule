@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { postAuditLog } from '../services/auditService'
+import { generateAnalyticsReport, type AnalyticsReportResponse } from '../services/analyticsService'
 
 interface ReportTemplate {
   id: string
@@ -104,56 +105,85 @@ export default function ComplianceReportsPage() {
   const [isExporting, setIsExporting] = useState(false)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
   const [reportHash, setReportHash] = useState('')
+  const [generatedReport, setGeneratedReport] = useState<AnalyticsReportResponse | null>(null)
+  const [generationError, setGenerationError] = useState('')
+
+  const getReportType = (): 'compliance_scorecard' | 'risk_assessment' | 'executive_summary' => {
+    if (selectedTemplate.id === 'rep-2') return 'risk_assessment'
+    if (selectedTemplate.id === 'rep-3' || selectedTemplate.id === 'rep-4') return 'compliance_scorecard'
+    return 'executive_summary'
+  }
+
+  const createDigest = async (value: string) => {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
+    return `0x${Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('')
+      .toUpperCase()}`
+  }
+
+  const buildReportPackage = (report: AnalyticsReportResponse, digest: string) => ({
+    report_title: selectedTemplate.title,
+    report_category: selectedTemplate.category,
+    digest_hash: digest,
+    generated_by: user.name,
+    role: user.role,
+    generated_at: new Date().toISOString(),
+    governing_authority: selectedTemplate.authority,
+    compliance_health_score: `${selectedTemplate.healthScore}/100`,
+    active_directives_enforced: selectedTemplate.activeDirectivesCount,
+    superseded_circulars_isolated: selectedTemplate.supersededCount,
+    executive_summary: selectedTemplate.description,
+    key_findings: selectedTemplate.keyFindings,
+    recommended_actions: selectedTemplate.recommendedActions,
+    live_analytics_report: report,
+  })
 
   const handleGenerateReport = async () => {
     setIsExporting(true)
+    setGenerationError('')
 
-    const raw = `${Date.now()}:${user.name}:${selectedTemplate.id}:${selectedTemplate.healthScore}`
-    const hash = `0x${Math.abs(raw.split('').reduce((a, c) => (a << 5) - a + c.charCodeAt(0), 0))
-      .toString(16)
-      .toUpperCase()
-      .padStart(16, '0')}`
-
-    setReportHash(hash)
-
-    // Audit log entry
     try {
-      await postAuditLog({
-        title: `Compliance Report Generated: ${selectedTemplate.title}`,
-        category: 'verification',
-        severity: 'verified',
-        authority: selectedTemplate.authority,
-        query_text: `Formal compliance report export: ${selectedTemplate.title}`,
-        confidence_score: selectedTemplate.healthScore / 100,
-        passage_text: selectedTemplate.description,
-        section: 'Executive Reporting Center',
-        execution_time_ms: 180,
-        details: `Risk officer ${user.name} generated formal executive report '${selectedTemplate.title}' (Health Score: ${selectedTemplate.healthScore}/100, SHA-256 Digest: ${hash}).`,
+      const report = await generateAnalyticsReport({
+        report_type: getReportType(),
+        include_trends: true,
+        include_recommendations: true,
+        format: 'json',
       })
-    } catch {
-      // ignore
+      const hash = await createDigest(JSON.stringify(buildReportPackage(report, '')))
+
+      setGeneratedReport(report)
+      setReportHash(hash)
+
+      try {
+        await postAuditLog({
+          title: `Compliance Report Generated: ${selectedTemplate.title}`,
+          category: 'verification',
+          severity: 'verified',
+          authority: selectedTemplate.authority,
+          query_text: `Formal compliance report export: ${selectedTemplate.title}`,
+          confidence_score: selectedTemplate.healthScore / 100,
+          passage_text: selectedTemplate.description,
+          section: 'Executive Reporting Center',
+          execution_time_ms: 180,
+          details: `Risk officer ${user.name} generated formal executive report '${selectedTemplate.title}' (Health Score: ${selectedTemplate.healthScore}/100, SHA-256 Digest: ${hash}).`,
+        })
+      } catch {
+        // Report generation remains usable if audit logging is temporarily unavailable.
+      }
+      setShowPreviewModal(true)
+    } catch (error) {
+      console.error('Failed to generate compliance report:', error)
+      setGenerationError('The live compliance report could not be generated. Check that the backend is running and try again.')
     } finally {
       setIsExporting(false)
-      setShowPreviewModal(true)
     }
   }
 
   const downloadReportPackage = () => {
-    const reportData = {
-      report_title: selectedTemplate.title,
-      report_category: selectedTemplate.category,
-      digest_hash: reportHash,
-      generated_by: user.name,
-      role: user.role,
-      generated_at: new Date().toISOString(),
-      governing_authority: selectedTemplate.authority,
-      compliance_health_score: `${selectedTemplate.healthScore}/100`,
-      active_directives_enforced: selectedTemplate.activeDirectivesCount,
-      superseded_circulars_isolated: selectedTemplate.supersededCount,
-      executive_summary: selectedTemplate.description,
-      key_findings: selectedTemplate.keyFindings,
-      recommended_actions: selectedTemplate.recommendedActions,
-    }
+    if (!generatedReport) return
+
+    const reportData = buildReportPackage(generatedReport, reportHash)
 
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(reportData, null, 2))
     const link = document.createElement('a')
@@ -287,6 +317,11 @@ export default function ComplianceReportsPage() {
             {isExporting ? 'Generating Audit Package...' : 'Generate Executive Report Package 📥'}
           </button>
         </div>
+        {generationError && (
+          <p role="alert" style={{ color: '#b91c1c', margin: '0.75rem 0 0', textAlign: 'right', fontSize: '0.84rem' }}>
+            {generationError}
+          </p>
+        )}
       </div>
 
       {/* ── Report Download Modal ────────────────────────────────────── */}

@@ -1,6 +1,4 @@
-import axios from 'axios'
-
-const API_BASE = 'http://localhost:8000/analytics'
+import api from './api'
 
 export interface ComplianceKPI {
   metric_name: string
@@ -80,7 +78,7 @@ export interface AnalyticsReportResponse {
  */
 export async function fetchAnalyticsDashboard(): Promise<AnalyticsDashboard> {
   try {
-    const response = await axios.get<AnalyticsDashboard>(`${API_BASE}/dashboard`)
+    const response = await api.get<AnalyticsDashboard>('/analytics/dashboard')
     return response.data
   } catch (error) {
     console.error('Failed to fetch analytics dashboard:', error)
@@ -95,7 +93,7 @@ export async function generateAnalyticsReport(
   request: AnalyticsReportRequest
 ): Promise<AnalyticsReportResponse> {
   try {
-    const response = await axios.post<AnalyticsReportResponse>(`${API_BASE}/report`, request)
+    const response = await api.post<AnalyticsReportResponse>('/analytics/report', request)
     return response.data
   } catch (error) {
     console.error('Failed to generate analytics report:', error)

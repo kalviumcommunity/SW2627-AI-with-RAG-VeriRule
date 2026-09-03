@@ -13,6 +13,32 @@ def test_health() -> None:
     assert response.json()["status"] == "ok"
 
 
+def test_analytics_dashboard_loads() -> None:
+    response = client.get("/analytics/dashboard")
+
+    assert response.status_code == 200
+    assert "kpis" in response.json()
+
+
+def test_analytics_report_generates_live_data() -> None:
+    response = client.post(
+        "/analytics/report",
+        json={
+            "report_type": "executive_summary",
+            "include_trends": True,
+            "include_recommendations": True,
+            "format": "json",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["report_type"] == "executive_summary"
+    assert body["report_id"]
+    assert "query_metrics" in body["data"]
+    assert body["recommendations"]
+
+
 def test_query_fails_safely_without_evidence() -> None:
     response = client.post("/queries", json={"question": "What KYC rule applies?"})
 
