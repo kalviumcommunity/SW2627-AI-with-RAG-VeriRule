@@ -119,7 +119,7 @@ class AnalyticsService:
     def _get_query_metrics(self) -> QueryMetric:
         """Get query execution metrics."""
         audit_service = get_audit_service()
-        events = audit_service.get_all_events()
+        events = audit_service.list_events(limit=10000)
 
         query_events = [e for e in events if hasattr(e, "category") and e.category == "query"]
 
@@ -164,7 +164,7 @@ class AnalyticsService:
 
         # Count documents from audit logs
         audit_service = get_audit_service()
-        events = audit_service.get_all_events()
+        events = audit_service.list_events(limit=10000)
         doc_events = [e for e in events if hasattr(e, "category") and e.category == "document_upload"]
 
         # Count unique documents
@@ -291,7 +291,7 @@ class AnalyticsService:
     def _get_top_queries(self) -> list[dict[str, str | int]]:
         """Get most common queries."""
         audit_service = get_audit_service()
-        events = audit_service.get_all_events()
+        events = audit_service.list_events(limit=10000)
 
         query_texts = []
         for e in events:
@@ -320,7 +320,7 @@ class AnalyticsService:
     def _get_audit_summary(self) -> dict[str, int]:
         """Get summary of audit events by category."""
         audit_service = get_audit_service()
-        events = audit_service.get_all_events()
+        events = audit_service.list_events(limit=10000)
 
         summary = {}
         for e in events:

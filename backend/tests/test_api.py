@@ -13,6 +13,13 @@ def test_health() -> None:
     assert response.json()["status"] == "ok"
 
 
+def test_analytics_dashboard_loads() -> None:
+    response = client.get("/analytics/dashboard")
+
+    assert response.status_code == 200
+    assert "kpis" in response.json()
+
+
 def test_query_fails_safely_without_evidence() -> None:
     response = client.post("/queries", json={"question": "What KYC rule applies?"})
 
