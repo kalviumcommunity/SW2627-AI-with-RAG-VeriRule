@@ -12,6 +12,7 @@ import RuleVerifierPage from './pages/RuleVerifierPage'
 import RuleTimelinePage from './pages/RuleTimelinePage'
 import ImpactAnalyzerPage from './pages/ImpactAnalyzerPage'
 import ComplianceSimulatorPage from './pages/ComplianceSimulatorPage'
+import ComplianceReportsPage from './pages/ComplianceReportsPage'
 import DocumentsPage from './pages/DocumentsPage'
 import SettingsPage from './pages/SettingsPage'
 import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage'
@@ -33,6 +34,7 @@ function App() {
             <Route path="rule-timeline" element={<RuleTimelinePage />} />
             <Route path="impact-analyzer" element={<ImpactAnalyzerPage />} />
             <Route path="simulator" element={<ComplianceSimulatorPage />} />
+            <Route path="reports" element={<ComplianceReportsPage />} />
             <Route path="query-engine" element={<QueryEnginePage />} />
             <Route path="audit-trail" element={<AuditTrailPage />} />
             <Route path="documents" element={<DocumentsPage />} />
