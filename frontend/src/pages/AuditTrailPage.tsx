@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   fetchAuditLogs,
   fetchAuditStats,
@@ -28,7 +28,7 @@ export default function AuditTrailPage() {
   const [newPassage, setNewPassage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const [fetchedLogs, fetchedStats] = await Promise.all([
@@ -46,11 +46,11 @@ export default function AuditTrailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeCategory, activeSeverity, searchQuery])
 
   useEffect(() => {
     loadData()
-  }, [activeCategory, activeSeverity, searchQuery])
+  }, [loadData])
 
   const handleCreateAudit = async (e: React.FormEvent) => {
     e.preventDefault()

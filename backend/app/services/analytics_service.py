@@ -367,23 +367,23 @@ class AnalyticsService:
 
         if report_type == "compliance_scorecard":
             data = {
-                "scorecard": dashboard.scorecard.dict(),
-                "kpis": [k.dict() for k in dashboard.kpis],
+                "scorecard": dashboard.scorecard.model_dump(),
+                "kpis": [k.model_dump() for k in dashboard.kpis],
             }
             summary = f"Compliance Score: {dashboard.scorecard.overall_score:.1f}/100 - Status: {dashboard.scorecard.status.upper()}"
 
         elif report_type == "risk_assessment":
             data = {
-                "risk_areas": [r.dict() for r in dashboard.risk_areas],
+                "risk_areas": [r.model_dump() for r in dashboard.risk_areas],
                 "high_risk_count": len([r for r in dashboard.risk_areas if r.risk_level == "high"]),
             }
             summary = f"Risk Assessment: {len([r for r in dashboard.risk_areas if r.risk_level == 'high'])} high-risk areas identified"
 
         else:  # executive_summary
             data = {
-                "query_metrics": dashboard.query_metrics.dict(),
-                "document_metrics": dashboard.document_metrics.dict(),
-                "scorecard": dashboard.scorecard.dict(),
+                "query_metrics": dashboard.query_metrics.model_dump(),
+                "document_metrics": dashboard.document_metrics.model_dump(),
+                "scorecard": dashboard.scorecard.model_dump(),
             }
             summary = f"Executive Summary: {dashboard.query_metrics.total_queries} queries processed with {dashboard.query_metrics.success_rate:.1f}% success rate"
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   fetchDocuments,
   uploadDocument,
@@ -22,7 +22,7 @@ export default function DocumentsPage() {
   const [chunksLoading, setChunksLoading] = useState(false)
   const [chunksError, setChunksError] = useState<string | null>(null)
 
-  const loadDocs = async () => {
+  const loadDocs = useCallback(async () => {
     setLoading(true)
     try {
       const data = await fetchDocuments({
@@ -35,11 +35,11 @@ export default function DocumentsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [authorityFilter, searchQuery])
 
   useEffect(() => {
     loadDocs()
-  }, [searchQuery, authorityFilter])
+  }, [loadDocs])
 
   useEffect(() => {
     if (!selectedDoc) {
