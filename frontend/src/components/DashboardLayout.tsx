@@ -81,6 +81,16 @@ export default function DashboardLayout() {
               <span className="sidebar-icon">🎯</span>
               <span>Rule Verifier</span>
             </div>
+          </Link>
+
+          <Link
+            to="/dashboard/diff-engine"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/diff-engine') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">🔀</span>
+              <span>Regulatory Diff</span>
+            </div>
             <span className="sidebar-badge" style={{ background: '#dcfce7', color: '#15803d' }}>New</span>
           </Link>
 

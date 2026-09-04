@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routes import analytics, audit, chat, documents, health, queries
+from app.api.routes import analytics, audit, chat, diff, documents, health, queries
 
 api_router = APIRouter()
 api_router.include_router(health.router, tags=["health"])
@@ -9,4 +9,6 @@ api_router.include_router(documents.router, prefix="/documents", tags=["document
 api_router.include_router(audit.router, prefix="/audit", tags=["audit"])
 api_router.include_router(chat.router, prefix="/chat", tags=["chat"])
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+api_router.include_router(diff.router, prefix="/diff", tags=["diff"])
+
 
