@@ -7,6 +7,7 @@ import DashboardLayout from './components/DashboardLayout'
 import DashboardPage from './pages/DashboardPage'
 import CircularsPage from './pages/CircularsPage'
 import QueryEnginePage from './pages/QueryEnginePage'
+import ChatPage from './pages/ChatPage'
 import AuditTrailPage from './pages/AuditTrailPage'
 import RuleVerifierPage from './pages/RuleVerifierPage'
 import RuleTimelinePage from './pages/RuleTimelinePage'
@@ -38,6 +39,7 @@ function App() {
             <Route path="simulator" element={<ComplianceSimulatorPage />} />
             <Route path="reports" element={<ComplianceReportsPage />} />
             <Route path="query-engine" element={<QueryEnginePage />} />
+            <Route path="chat" element={<ChatPage />} />
             <Route path="audit-trail" element={<AuditTrailPage />} />
             <Route path="documents" element={<DocumentsPage />} />
             <Route path="analytics" element={<AnalyticsDashboardPage />} />
