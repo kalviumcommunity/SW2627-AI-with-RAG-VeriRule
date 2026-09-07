@@ -95,6 +95,17 @@ export default function DashboardLayout() {
           </Link>
 
           <Link
+            to="/dashboard/remediation"
+            className={`sidebar-nav-item ${path.startsWith('/dashboard/remediation') ? 'active' : ''}`}
+          >
+            <div className="sidebar-nav-left">
+              <span className="sidebar-icon">🛠️</span>
+              <span>Remediation & CAPA</span>
+            </div>
+            <span className="sidebar-badge" style={{ background: '#dcfce7', color: '#15803d' }}>New</span>
+          </Link>
+
+          <Link
             to="/dashboard/rule-timeline"
             className={`sidebar-nav-item ${path.startsWith('/dashboard/rule-timeline') ? 'active' : ''}`}
           >

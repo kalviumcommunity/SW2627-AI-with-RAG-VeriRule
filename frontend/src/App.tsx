@@ -18,6 +18,7 @@ import DocumentsPage from './pages/DocumentsPage'
 import SettingsPage from './pages/SettingsPage'
 import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage'
 import RegulatoryDiffPage from './pages/RegulatoryDiffPage'
+import RemediationPage from './pages/RemediationPage'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="circulars" element={<CircularsPage />} />
             <Route path="rule-verifier" element={<RuleVerifierPage />} />
             <Route path="diff-engine" element={<RegulatoryDiffPage />} />
+            <Route path="remediation" element={<RemediationPage />} />
             <Route path="rule-timeline" element={<RuleTimelinePage />} />
             <Route path="impact-analyzer" element={<ImpactAnalyzerPage />} />
             <Route path="simulator" element={<ComplianceSimulatorPage />} />

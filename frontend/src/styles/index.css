@@ -4360,3 +4360,14 @@ footer {
   color: #334155;
 }
 
+/* ─── Compliance Remediation & CAPA Workflow Styles ───────────────── */
+.remediation-page {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.clause-status-open { border-left: 5px solid #ef4444; }
+.clause-status-in_progress { border-left: 5px solid #d97706; }
+.clause-status-under_review { border-left: 5px solid #7c3aed; }
+.clause-status-closed { border-left: 5px solid #16a34a; }
+
+
