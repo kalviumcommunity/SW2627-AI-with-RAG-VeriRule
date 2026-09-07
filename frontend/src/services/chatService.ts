@@ -3,7 +3,7 @@
  * Handles the SSE streaming chat API and PDF session export.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 
 export interface ChatSource {
   document_id: string

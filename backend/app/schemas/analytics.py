@@ -1,7 +1,7 @@
 """Analytics schema for compliance metrics and reporting."""
 
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel
 
@@ -77,11 +77,11 @@ class AnalyticsDashboard(BaseModel):
 class AnalyticsReportRequest(BaseModel):
     """Request for analytics report generation."""
 
-    report_type: str  # "compliance_scorecard", "risk_assessment", "executive_summary"
+    report_type: Literal["compliance_scorecard", "risk_assessment", "executive_summary"]
     include_trends: bool = True
     include_recommendations: bool = True
     date_range: Optional[tuple[str, str]] = None  # (start_date, end_date)
-    format: str = "json"  # "json", "csv", "pdf"
+    format: Literal["json"] = "json"
 
 
 class AnalyticsReportResponse(BaseModel):
