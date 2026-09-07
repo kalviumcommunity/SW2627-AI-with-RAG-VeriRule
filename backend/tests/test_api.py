@@ -39,6 +39,15 @@ def test_analytics_report_generates_live_data() -> None:
     assert body["recommendations"]
 
 
+def test_analytics_rejects_unsupported_report_options() -> None:
+    response = client.post(
+        "/analytics/report",
+        json={"report_type": "not-a-report", "format": "pdf"},
+    )
+
+    assert response.status_code == 422
+
+
 def test_query_fails_safely_without_evidence() -> None:
     response = client.post("/queries", json={"question": "What KYC rule applies?"})
 

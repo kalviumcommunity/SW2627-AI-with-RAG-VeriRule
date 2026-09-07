@@ -1,9 +1,7 @@
 """Analytics service for compliance metrics and reporting."""
 
-import json
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Optional
+from collections import Counter
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from app.core.config import get_settings
@@ -16,7 +14,6 @@ from app.schemas.analytics import (
     QueryMetric,
     RiskAreaMetric,
 )
-from app.schemas.audit import AuditEvent
 from app.services.audit_service import get_audit_service
 from app.vectorstore.chroma import get_vector_store
 
@@ -124,18 +121,32 @@ class AnalyticsService:
         query_events = [e for e in events if hasattr(e, "category") and e.category == "query"]
 
         total = len(query_events)
-        successful = len([e for e in query_events if hasattr(e, "severity") and str(e.severity).endswith("verified")])
-        failed = len([e for e in query_events if hasattr(e, "severity") and str(e.severity).endswith("flagged")])
+        successful = len(
+            [
+                e
+                for e in query_events
+                if hasattr(e, "severity") and str(e.severity).endswith("verified")
+            ]
+        )
+        failed = len(
+            [
+                e
+                for e in query_events
+                if hasattr(e, "severity") and str(e.severity).endswith("flagged")
+            ]
+        )
 
         confidence_scores = []
         for e in query_events:
             if hasattr(e, "confidence_score") and e.confidence_score is not None:
                 confidence_scores.append(e.confidence_score)
 
-        avg_confidence = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.0
+        avg_confidence = (
+            sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.0
+        )
 
         insufficient_evidence = len(
-            [e for e in query_events if hasattr(e, "description") and "insufficient" in str(e.description).lower()]
+            [e for e in query_events if e.details and "insufficient_evidence" in e.details]
         )
 
         success_rate = (successful / total * 100) if total > 0 else 0.0
@@ -165,7 +176,9 @@ class AnalyticsService:
         # Count documents from audit logs
         audit_service = get_audit_service()
         events = audit_service.list_events(limit=10000)
-        doc_events = [e for e in events if hasattr(e, "category") and e.category == "document_upload"]
+        doc_events = [
+            e for e in events if hasattr(e, "category") and e.category == "document_upload"
+        ]
 
         # Count unique documents
         unique_docs = set()
@@ -177,18 +190,9 @@ class AnalyticsService:
             if hasattr(e, "authority") and e.authority:
                 authority_dist[e.authority] = authority_dist.get(e.authority, 0) + 1
 
-        # Default authority distribution if empty
-        if not authority_dist:
-            authority_dist = {
-                "Reserve Bank of India (RBI)": 8,
-                "Securities and Exchange Board (SEBI)": 4,
-                "Basel Committee (BCBS)": 2,
-                "Insurance Regulatory (IRDAI)": 1,
-            }
-
         return DocumentMetric(
             total_documents=len(unique_docs),
-            total_chunks=total_chunks if total_chunks > 0 else 42,
+            total_chunks=total_chunks,
             document_upload_count=len(doc_events),
             authority_distribution=authority_dist,
             upload_trend=self._get_upload_trend(),
@@ -251,7 +255,9 @@ class AnalyticsService:
 
         overall_score = sum(scores.values()) / len(scores) if scores else 0.0
 
-        status = "compliant" if overall_score >= 85 else "at_risk" if overall_score >= 70 else "critical"
+        status = (
+            "compliant" if overall_score >= 85 else "at_risk" if overall_score >= 70 else "critical"
+        )
 
         key_findings = [
             f"Query success rate: {query_metrics.success_rate:.1f}%",
@@ -278,15 +284,18 @@ class AnalyticsService:
 
     def _get_compliance_trend(self) -> dict[str, float]:
         """Get compliance score trend over last 30 days."""
-        trend = {}
-        base_score = 82.0
+        events = get_audit_service().list_events(limit=10000)
+        daily_queries: dict[str, list[bool]] = {}
+        for event in events:
+            if event.category != "query":
+                continue
+            date = event.timestamp.astimezone(timezone.utc).strftime("%Y-%m-%d")
+            daily_queries.setdefault(date, []).append(event.severity == "verified")
 
-        for i in range(30, 0, -1):
-            date = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
-            score = base_score + (i / 30) * 5
-            trend[date] = min(100.0, score)
-
-        return trend
+        return {
+            date: round(sum(results) / len(results) * 100, 1)
+            for date, results in sorted(daily_queries.items())
+        }
 
     def _get_top_queries(self) -> list[dict[str, str | int]]:
         """Get most common queries."""
@@ -298,24 +307,8 @@ class AnalyticsService:
             if hasattr(e, "category") and e.category == "query" and hasattr(e, "query_text"):
                 query_texts.append(e.query_text)
 
-        # Count occurrences
-        from collections import Counter
-
         query_counts = Counter(query_texts)
-        top_queries = [
-            {"query": q, "count": c} for q, c in query_counts.most_common(5)
-        ]
-
-        if not top_queries:
-            top_queries = [
-                {"query": "What is the current rule for digital payment transfers?", "count": 12},
-                {"query": "Cyber security compliance requirements", "count": 8},
-                {"query": "Consumer protection guidelines", "count": 6},
-                {"query": "KYC verification procedures", "count": 5},
-                {"query": "Transaction monitoring rules", "count": 4},
-            ]
-
-        return top_queries
+        return [{"query": q, "count": c} for q, c in query_counts.most_common(5)]
 
     def _get_audit_summary(self) -> dict[str, int]:
         """Get summary of audit events by category."""
@@ -328,25 +321,17 @@ class AnalyticsService:
                 cat = str(e.category)
                 summary[cat] = summary.get(cat, 0) + 1
 
-        if not summary:
-            summary = {
-                "query": 45,
-                "document_upload": 12,
-                "verification": 38,
-                "audit_log": 0,
-                "user_action": 8,
-            }
-
         return summary
 
     def _get_upload_trend(self) -> dict[str, int]:
         """Get document upload trend."""
-        trend = {}
-        for i in range(7, 0, -1):
-            date = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
-            trend[date] = i * 2
-
-        return trend
+        events = get_audit_service().list_events(limit=10000)
+        uploads = Counter(
+            event.timestamp.astimezone(timezone.utc).strftime("%Y-%m-%d")
+            for event in events
+            if event.category == "ingestion"
+        )
+        return dict(sorted(uploads.items()))
 
     def _get_status(self, current: float, target: float) -> str:
         """Determine status based on current vs target."""
@@ -370,14 +355,18 @@ class AnalyticsService:
                 "scorecard": dashboard.scorecard.model_dump(),
                 "kpis": [k.model_dump() for k in dashboard.kpis],
             }
-            summary = f"Compliance Score: {dashboard.scorecard.overall_score:.1f}/100 - Status: {dashboard.scorecard.status.upper()}"
+            summary = (
+                f"Compliance Score: {dashboard.scorecard.overall_score:.1f}/100 - "
+                f"Status: {dashboard.scorecard.status.upper()}"
+            )
 
         elif report_type == "risk_assessment":
             data = {
                 "risk_areas": [r.model_dump() for r in dashboard.risk_areas],
                 "high_risk_count": len([r for r in dashboard.risk_areas if r.risk_level == "high"]),
             }
-            summary = f"Risk Assessment: {len([r for r in dashboard.risk_areas if r.risk_level == 'high'])} high-risk areas identified"
+            high_risk_count = len([r for r in dashboard.risk_areas if r.risk_level == "high"])
+            summary = f"Risk Assessment: {high_risk_count} high-risk areas identified"
 
         else:  # executive_summary
             data = {
@@ -385,7 +374,10 @@ class AnalyticsService:
                 "document_metrics": dashboard.document_metrics.model_dump(),
                 "scorecard": dashboard.scorecard.model_dump(),
             }
-            summary = f"Executive Summary: {dashboard.query_metrics.total_queries} queries processed with {dashboard.query_metrics.success_rate:.1f}% success rate"
+            summary = (
+                f"Executive Summary: {dashboard.query_metrics.total_queries} queries processed "
+                f"with {dashboard.query_metrics.success_rate:.1f}% success rate"
+            )
 
         if include_trends:
             data["compliance_trend"] = dashboard.compliance_trend
