@@ -1,16 +1,16 @@
-from enum import StrEnum
+from enum import Enum
 
 from pydantic import BaseModel
 
 
-class DocumentStatus(StrEnum):
+class DocumentStatus(str, Enum):
     ACTIVE = "active"
     SUPERSEDED = "superseded"
     ARCHIVED = "archived"
     DRAFT = "draft"
 
 
-class DocumentCategory(StrEnum):
+class DocumentCategory(str, Enum):
     MASTER_DIRECTION = "Master Direction"
     CIRCULAR = "Circular"
     INTERNAL_AUDIT = "Internal Audit Report"

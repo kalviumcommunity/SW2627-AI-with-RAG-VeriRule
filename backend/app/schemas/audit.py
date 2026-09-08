@@ -1,9 +1,10 @@
 from datetime import datetime
-from enum import StrEnum
+from enum import Enum
+
 from pydantic import BaseModel, Field
 
 
-class AuditCategory(StrEnum):
+class AuditCategory(str, Enum):
     QUERY = "query"
     VERIFICATION = "verification"
     INGESTION = "ingestion"
@@ -11,7 +12,7 @@ class AuditCategory(StrEnum):
     SYSTEM = "system"
 
 
-class AuditSeverity(StrEnum):
+class AuditSeverity(str, Enum):
     VERIFIED = "verified"
     FLAGGED = "flagged"
     SUPERSEDED = "superseded"

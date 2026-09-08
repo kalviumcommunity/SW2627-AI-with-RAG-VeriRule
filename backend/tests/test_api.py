@@ -56,7 +56,34 @@ def test_query_fails_safely_without_evidence() -> None:
     assert response.json()["sources"] == []
 
 
-def test_document_upload_is_accepted_for_ingestion() -> None:
+def test_document_upload_is_accepted_for_ingestion(monkeypatch) -> None:
+    """Upload should succeed without a real vector store (avoids ONNX model download)."""
+
+    class MockVectorStore:
+        def upsert_chunks(self, chunks):
+            pass
+
+        def delete_document(self, document_id: str) -> None:
+            pass
+
+        def search(self, query: str, n_results: int = 5, where=None):
+            return []
+
+        def get_document_chunks(self, document_id: str):
+            return []
+
+        @property
+        def count(self):
+            return 0
+
+    mock_store = MockVectorStore()
+
+    from app.services import document_service as _doc_svc
+    from app.vectorstore import chroma as _chroma
+
+    monkeypatch.setattr(_chroma, "get_vector_store", lambda: mock_store)
+    monkeypatch.setattr(_doc_svc, "get_vector_store", lambda: mock_store)
+
     response = client.post(
         "/documents/upload",
         files={"file": ("circular.txt", b"sample compliance content", "text/plain")},
@@ -64,6 +91,7 @@ def test_document_upload_is_accepted_for_ingestion() -> None:
 
     assert response.status_code == 202
     assert response.json()["status"] == "active"
+
 
 
 def test_query_rejects_weak_retrieval_evidence(monkeypatch) -> None:

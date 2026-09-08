@@ -6,8 +6,18 @@ from app.vectorstore.chroma import ChromaVectorStore
 
 
 class TestEmbeddingFunction:
+    """Minimal in-memory embedding function satisfying the chromadb >= 1.5.9 interface."""
+
+    is_legacy: bool = False  # suppresses DeprecationWarning
+
     def __call__(self, input: Sequence[str]) -> list[list[float]]:
         return [[float(len(text)), 1.0] for text in input]
+
+    def embed_query(self, input: Sequence[str]) -> list[list[float]]:  # called during .query()
+        return [[float(len(text)), 1.0] for text in input]
+
+    def name(self) -> str:
+        return "test-embedding-fn"
 
 
 def test_chroma_persists_chunks_and_supports_metadata_filter(tmp_path: Path) -> None:

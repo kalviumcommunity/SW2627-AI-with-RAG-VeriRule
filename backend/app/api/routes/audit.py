@@ -1,4 +1,5 @@
 from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 
 from app.schemas.audit import AuditCategory, AuditEvent, AuditEventCreate, AuditSeverity, AuditStats
