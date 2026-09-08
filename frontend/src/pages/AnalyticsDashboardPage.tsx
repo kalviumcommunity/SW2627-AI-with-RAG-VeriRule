@@ -78,7 +78,7 @@ export default function AnalyticsDashboardPage() {
   }
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div className="analytics-dashboard-page" style={{ padding: '2rem', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: '2rem' }}>
