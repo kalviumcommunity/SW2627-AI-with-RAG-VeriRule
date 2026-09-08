@@ -1,8 +1,8 @@
-import hashlib
 from datetime import datetime, timedelta
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
+
 from app.schemas.remediation import (
     CAPACreateRequest,
     CAPASignoffRequest,

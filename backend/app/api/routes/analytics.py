@@ -2,7 +2,11 @@
 
 from fastapi import APIRouter, Depends
 
-from app.schemas.analytics import AnalyticsDashboard, AnalyticsReportRequest, AnalyticsReportResponse
+from app.schemas.analytics import (
+    AnalyticsDashboard,
+    AnalyticsReportRequest,
+    AnalyticsReportResponse,
+)
 from app.services.analytics_service import AnalyticsService, get_analytics_service
 
 router = APIRouter()

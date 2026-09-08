@@ -2,6 +2,7 @@ import hashlib
 from uuid import uuid4
 
 from fastapi import APIRouter
+
 from app.schemas.diff import (
     ClauseDiff,
     DepartmentalDeltaImpact,
