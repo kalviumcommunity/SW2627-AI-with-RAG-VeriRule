@@ -1,4 +1,5 @@
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 export default function DashboardLayout() {
@@ -6,6 +7,7 @@ export default function DashboardLayout() {
   const location = useLocation()
   const path = location.pathname
   const { user, logout } = useAuth()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const avatarInitial = user.name ? user.name.trim().charAt(0).toUpperCase() : 'U'
 
@@ -14,11 +16,26 @@ export default function DashboardLayout() {
     navigate('/signin')
   }
 
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [path])
+
   return (
     <div className="dashboard-layout">
       {/* ── Header ────────────────────────────────────────────────────── */}
       <header className="dashboard-header">
         <div className="dashboard-header-left">
+          <button
+            type="button"
+            className="dashboard-menu-toggle"
+            onClick={() => setSidebarOpen((open) => !open)}
+            aria-label={sidebarOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={sidebarOpen}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
           <Link to="/" className="logo-wrap" aria-label="VeriRule home">
             <img src="/logo.svg" alt="VeriRule logo" className="logo-icon" />
             <span className="logo-name">
@@ -47,7 +64,13 @@ export default function DashboardLayout() {
 
       {/* ── Body ──────────────────────────────────────────────────────── */}
       <div className="dashboard-body">
-        <aside className="dashboard-sidebar" aria-label="Navigation">
+        <button
+          type="button"
+          className={`sidebar-scrim ${sidebarOpen ? 'visible' : ''}`}
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Close navigation menu"
+        />
+        <aside className={`dashboard-sidebar ${sidebarOpen ? 'open' : ''}`} aria-label="Navigation">
           <div className="sidebar-group-label">Main</div>
 
           <Link
@@ -177,8 +200,6 @@ export default function DashboardLayout() {
             </div>
             <span className="sidebar-badge" style={{ background: '#ede9fe', color: '#7c3aed' }}>New</span>
           </Link>
-
-          <div className="sidebar-group-label">System</div>
 
           <Link
             to="/dashboard/documents"
