@@ -281,206 +281,264 @@ export default function RegulatoryDiffPage() {
     }
   }
 
+  const getDeptIcon = (deptName: string) => {
+    if (deptName.includes('SOC') || deptName.includes('Cyber') || deptName.includes('InfoSec')) return '🛡️'
+    if (deptName.includes('Core Banking') || deptName.includes('Mobile') || deptName.includes('App')) return '📱'
+    if (deptName.includes('Treasury') || deptName.includes('Interbank') || deptName.includes('Payment')) return '🏦'
+    if (deptName.includes('KYC') || deptName.includes('Onboarding')) return '🆔'
+    if (deptName.includes('AML') || deptName.includes('Monitoring')) return '🔍'
+    return '⚙️'
+  }
+
+  const getSlaBadgeStyle = (sla: string) => {
+    if (sla.includes('Immediate') || sla.includes('7 Days') || sla.includes('15 Days')) {
+      return { background: '#fef2f2', color: '#991b1b', border: '1px solid #fecaca' }
+    }
+    if (sla.includes('High') || sla.includes('30 Days')) {
+      return { background: '#fffbe6', color: '#b45309', border: '1px solid #ffe58f' }
+    }
+    return { background: '#f0f5ff', color: '#1d39c4', border: '1px solid #adc6ff' }
+  }
+
   return (
     <div className="diff-engine-page">
-      {/* ── Page Header ─────────────────────────────────────────────────── */}
-      <div className="page-header">
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <h1 className="page-title">Automated Regulatory Delta & Diff Engine</h1>
-            <span className="sidebar-badge" style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.8rem', padding: '0.2rem 0.6rem' }}>
-              Core Feature
-            </span>
+      {/* ── Page Header Banner ───────────────────────────────────────────── */}
+      <div className="dashboard-welcome diff-hero-banner">
+        <div className="welcome-content">
+          <div className="diff-title-row">
+            <div className="diff-hero-icon-wrap">
+              <span>⚡</span>
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <h1 className="page-title" style={{ margin: 0 }}>Automated Regulatory Delta & Diff Engine</h1>
+                <span className="diff-core-badge">
+                  <span className="live-pulse-dot"></span> Core Feature
+                </span>
+              </div>
+              <p className="page-subtitle" style={{ marginTop: '0.35rem' }}>
+                Side-by-side clause supersession visualizer, parameter shift extractor, and departmental impact matrix.
+              </p>
+            </div>
           </div>
-          <p className="page-subtitle">
-            Side-by-side clause supersession visualizer, parameter shift extractor, and departmental impact matrix.
-          </p>
         </div>
 
-        <div className="header-actions" style={{ display: 'flex', gap: '0.75rem' }}>
-          <button type="button" onClick={handleCopyHash} className="btn btn-secondary btn-sm">
+        <div className="diff-header-actions">
+          <button type="button" onClick={handleCopyHash} className="btn-diff-secondary">
             {copiedHash ? '✓ Certificate Copied' : '🔑 Copy Cryptographic Hash'}
           </button>
-          <button type="button" onClick={handleDownloadMemorandum} className="btn btn-primary btn-sm">
-            📥 Export Regulatory Delta Memorandum
+          <button type="button" onClick={handleDownloadMemorandum} className="btn-diff-primary">
+            <span>📥</span> Export Regulatory Delta Memorandum
           </button>
         </div>
       </div>
 
-      {/* ── Control Bar ──────────────────────────────────────────────────── */}
-      <div className="card diff-controls-card mb-4" style={{ padding: '1.25rem' }}>
-        <div className="diff-preset-selector-row mb-3">
-          <label htmlFor="preset-select" className="form-label" style={{ fontWeight: 600, color: 'var(--color-text-main)' }}>
-            Select Regulatory Comparison Pair:
-          </label>
-          <select
-            id="preset-select"
-            className="form-control"
-            value={selectedPresetId}
-            onChange={(e) => setSelectedPresetId(e.target.value)}
-            style={{ width: '100%', fontSize: '0.95rem', fontWeight: 500 }}
-          >
-            {COMPARISON_PRESETS.map((preset) => (
-              <option key={preset.id} value={preset.id}>
-                [{preset.baseline_id} ➔ {preset.target_id}] — {preset.title}
-              </option>
-            ))}
-          </select>
+      {/* ── Selector & Toolbar Control Bar ───────────────────────────────── */}
+      <div className="dashboard-section-card diff-controls-card">
+        <div className="diff-preset-selector-row">
+          <div className="preset-label-wrap">
+            <span className="preset-icon">⇄</span>
+            <label htmlFor="preset-select" className="preset-label">
+              Select Regulatory Comparison Pair:
+            </label>
+          </div>
+          <div className="preset-select-wrap">
+            <select
+              id="preset-select"
+              className="preset-select-input"
+              value={selectedPresetId}
+              onChange={(e) => setSelectedPresetId(e.target.value)}
+            >
+              {COMPARISON_PRESETS.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  [{preset.baseline_id} ➔ {preset.target_id}] — {preset.title}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="diff-filter-toolbar">
-          <div className="search-box-wrap" style={{ flex: 1, minWidth: '240px' }}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search clause ID, section, keyword or requirement..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="diff-filter-left">
+            <div className="diff-search-box">
+              <span className="search-icon-prefix">🔍</span>
+              <input
+                type="text"
+                className="form-control diff-search-input"
+                placeholder="Search clause ID, section, keyword, or parameter shift..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            <div className="filter-group">
+              <span className="filter-label">Diff Status:</span>
+              <button
+                type="button"
+                className={`chip ${filterStatus === 'all' ? 'active' : ''}`}
+                onClick={() => setFilterStatus('all')}
+              >
+                All ({activePreset.clauses.length})
+              </button>
+              <button
+                type="button"
+                className={`chip chip-modified ${filterStatus === 'modified' ? 'active' : ''}`}
+                onClick={() => setFilterStatus('modified')}
+              >
+                ● Modified ({activePreset.summary.modified})
+              </button>
+              <button
+                type="button"
+                className={`chip chip-added ${filterStatus === 'added' ? 'active' : ''}`}
+                onClick={() => setFilterStatus('added')}
+              >
+                + Added ({activePreset.summary.added})
+              </button>
+              <button
+                type="button"
+                className={`chip chip-removed ${filterStatus === 'removed' ? 'active' : ''}`}
+                onClick={() => setFilterStatus('removed')}
+              >
+                - Superseded ({activePreset.summary.removed})
+              </button>
+            </div>
           </div>
 
-          <div className="filter-group">
-            <span className="filter-label">Diff Type:</span>
-            <button
-              type="button"
-              className={`chip ${filterStatus === 'all' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('all')}
-            >
-              All Clauses ({activePreset.clauses.length})
-            </button>
-            <button
-              type="button"
-              className={`chip chip-modified ${filterStatus === 'modified' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('modified')}
-            >
-              [~] Modified ({activePreset.summary.modified})
-            </button>
-            <button
-              type="button"
-              className={`chip chip-added ${filterStatus === 'added' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('added')}
-            >
-              [+] Added ({activePreset.summary.added})
-            </button>
-            <button
-              type="button"
-              className={`chip chip-removed ${filterStatus === 'removed' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('removed')}
-            >
-              [-] Superseded ({activePreset.summary.removed})
-            </button>
-          </div>
+          <div className="diff-filter-right">
+            <div className="filter-group">
+              <span className="filter-label">Risk Severity:</span>
+              <button
+                type="button"
+                className={`chip ${filterRisk === 'all' ? 'active' : ''}`}
+                onClick={() => setFilterRisk('all')}
+              >
+                All
+              </button>
+              <button
+                type="button"
+                className={`chip chip-risk-critical ${filterRisk === 'critical' ? 'active' : ''}`}
+                onClick={() => setFilterRisk('critical')}
+              >
+                🔥 Critical
+              </button>
+              <button
+                type="button"
+                className={`chip chip-risk-high ${filterRisk === 'high' ? 'active' : ''}`}
+                onClick={() => setFilterRisk('high')}
+              >
+                ⚠️ High
+              </button>
+            </div>
 
-          <div className="filter-group">
-            <span className="filter-label">Risk:</span>
-            <button
-              type="button"
-              className={`chip ${filterRisk === 'all' ? 'active' : ''}`}
-              onClick={() => setFilterRisk('all')}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              className={`chip ${filterRisk === 'critical' ? 'active' : ''}`}
-              onClick={() => setFilterRisk('critical')}
-            >
-              Critical
-            </button>
-            <button
-              type="button"
-              className={`chip ${filterRisk === 'high' ? 'active' : ''}`}
-              onClick={() => setFilterRisk('high')}
-            >
-              High
-            </button>
-          </div>
-
-          <div className="view-mode-toggle">
-            <button
-              type="button"
-              className={`btn btn-sm ${viewMode === 'split' ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setViewMode('split')}
-            >
-              Side-by-Side
-            </button>
-            <button
-              type="button"
-              className={`btn btn-sm ${viewMode === 'unified' ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setViewMode('unified')}
-            >
-              Unified Stack
-            </button>
+            <div className="view-mode-toggle">
+              <button
+                type="button"
+                className={`view-mode-btn ${viewMode === 'split' ? 'active' : ''}`}
+                onClick={() => setViewMode('split')}
+              >
+                Side-by-Side
+              </button>
+              <button
+                type="button"
+                className={`view-mode-btn ${viewMode === 'unified' ? 'active' : ''}`}
+                onClick={() => setViewMode('unified')}
+              >
+                Unified Stack
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ── Overview Summary Cards ────────────────────────────────────────── */}
-      <div className="diff-summary-grid mb-4">
-        <div className="card metric-card">
-          <div className="metric-label">Baseline Document (Historical)</div>
-          <div className="metric-value" style={{ fontSize: '1.25rem', color: '#64748b' }}>
+      {/* ── Overview Metric Summary Cards ─────────────────────────────────── */}
+      <div className="metrics-grid diff-summary-grid">
+        <div className="metric-card diff-metric-card baseline-card">
+          <div className="metric-header">
+            <span className="metric-title">Baseline Document (Historical)</span>
+            <div className="metric-icon-wrap" style={{ background: 'rgba(100, 116, 139, 0.1)', color: '#475569' }}>
+              📜
+            </div>
+          </div>
+          <div className="metric-value diff-metric-value" style={{ fontSize: '1.2rem', color: '#334155' }}>
             {activePreset.baseline_id}
           </div>
-          <div className="metric-sub" style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
+          <div className="metric-sub" style={{ color: '#64748b' }}>
             Historical Circular Baseline
           </div>
         </div>
 
-        <div className="card metric-card" style={{ borderColor: 'var(--color-primary-light)' }}>
-          <div className="metric-label">Target Master Direction (Governing)</div>
-          <div className="metric-value" style={{ fontSize: '1.25rem', color: 'var(--color-primary)' }}>
+        <div className="metric-card diff-metric-card target-card">
+          <div className="metric-header">
+            <span className="metric-title">Governing Master Direction</span>
+            <div className="metric-icon-wrap" style={{ background: 'rgba(79, 70, 229, 0.1)', color: '#4f46e5' }}>
+              🎯
+            </div>
+          </div>
+          <div className="metric-value diff-metric-value" style={{ fontSize: '1.2rem', color: '#4f46e5' }}>
             {activePreset.target_id}
           </div>
-          <div className="metric-sub" style={{ fontSize: '0.8rem', color: '#166534', marginTop: '0.2rem' }}>
-            Effective Date: {activePreset.effective_date}
+          <div className="metric-sub" style={{ color: '#16a34a', fontWeight: 600 }}>
+            <span>📅</span> Effective Date: {activePreset.effective_date}
           </div>
         </div>
 
-        <div className="card metric-card">
-          <div className="metric-label">Regulatory Delta Summary</div>
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-            <span className="diff-tag diff-tag-modified">[~] {activePreset.summary.modified} Mod</span>
-            <span className="diff-tag diff-tag-added">[+] {activePreset.summary.added} Add</span>
-            <span className="diff-tag diff-tag-removed">[-] {activePreset.summary.removed} Del</span>
+        <div className="metric-card diff-metric-card summary-card">
+          <div className="metric-header">
+            <span className="metric-title">Regulatory Delta Summary</span>
+            <div className="metric-icon-wrap" style={{ background: 'rgba(217, 119, 6, 0.1)', color: '#d97706' }}>
+              📊
+            </div>
           </div>
-          <div className="metric-sub" style={{ fontSize: '0.8rem', marginTop: '0.4rem' }}>
+          <div className="diff-tags-row">
+            <span className="diff-tag diff-tag-modified">● {activePreset.summary.modified} Mod</span>
+            <span className="diff-tag diff-tag-added">+ {activePreset.summary.added} Add</span>
+            <span className="diff-tag diff-tag-removed">- {activePreset.summary.removed} Del</span>
+          </div>
+          <div className="metric-sub" style={{ color: '#64748b' }}>
             {activePreset.summary.unchanged} Unchanged Clauses
           </div>
         </div>
 
-        <div className="card metric-card">
-          <div className="metric-label">SHA-256 Audit Certificate</div>
-          <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all', color: '#475569', marginTop: '0.4rem' }}>
-            {activePreset.hash.substring(0, 32)}...
+        <div className="metric-card diff-metric-card audit-card">
+          <div className="metric-header">
+            <span className="metric-title">SHA-256 Audit Certificate</span>
+            <div className="metric-icon-wrap" style={{ background: 'rgba(5, 150, 105, 0.1)', color: '#059669' }}>
+              🔐
+            </div>
           </div>
-          <div className="metric-sub" style={{ fontSize: '0.8rem', color: '#059669', marginTop: '0.3rem' }}>
-            ✓ Verified Immutable
+          <div className="audit-hash-display">
+            {activePreset.hash.substring(0, 24)}...
+          </div>
+          <div className="metric-sub" style={{ color: '#059669', fontWeight: 700 }}>
+            <span className="immutable-pulse">●</span> Verified Immutable
           </div>
         </div>
       </div>
 
-      {/* ── Departmental Delta Impact Matrix ──────────────────────────────── */}
-      <div className="card mb-4" style={{ padding: '1.25rem' }}>
-        <h3 className="section-title mb-3" style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>🏢</span> Operational Department Impact Matrix
-        </h3>
+      {/* ── Operational Department Impact Matrix ─────────────────────────── */}
+      <div className="dashboard-section-card impact-matrix-section">
+        <div className="section-header-row">
+          <h3 className="section-card-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span>🏢</span> Operational Department Impact Matrix
+          </h3>
+          <span className="impact-count-badge">{activePreset.impacts.length} Impact Zones Identified</span>
+        </div>
+
         <div className="impact-matrix-grid">
           {activePreset.impacts.map((imp, idx) => (
             <div key={idx} className="impact-department-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                <span style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-heading)' }}>
-                  {imp.department}
-                </span>
-                <span className="badge" style={{ background: '#fef3c7', color: '#92400e', fontSize: '0.75rem' }}>
+              <div className="impact-card-top">
+                <div className="impact-dept-name">
+                  <span className="dept-icon">{getDeptIcon(imp.department)}</span>
+                  <span>{imp.department}</span>
+                </div>
+                <span className="sla-badge" style={getSlaBadgeStyle(imp.sla_impact)}>
                   {imp.sla_impact}
                 </span>
               </div>
-              <p style={{ fontSize: '0.85rem', color: '#475569', margin: '0.4rem 0 0.6rem 0' }}>
-                {imp.risk_summary}
-              </p>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: 500 }}>
-                Impacted Rules: {imp.changes_count} Clause Shift(s)
+              <p className="impact-risk-summary">{imp.risk_summary}</p>
+              <div className="impact-clause-shifts">
+                <span className="shift-dot">●</span> Impacted Rules: <strong>{imp.changes_count} Clause Shift(s)</strong>
               </div>
             </div>
           ))}
@@ -489,31 +547,43 @@ export default function RegulatoryDiffPage() {
 
       {/* ── Clause-by-Clause Visual Diff List ─────────────────────────────── */}
       <div className="diff-clauses-section">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--color-heading)', margin: 0 }}>
+        <div className="diff-list-header">
+          <h2 className="diff-list-title">
             Clause-by-Clause Comparison ({filteredClauses.length} Result{filteredClauses.length !== 1 ? 's' : ''})
           </h2>
-          <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
-            Showing clauses for {activePreset.baseline_id} ➔ {activePreset.target_id}
+          <span className="diff-list-subtitle">
+            Comparing Baseline <strong>{activePreset.baseline_id}</strong> ➔ Governing <strong>{activePreset.target_id}</strong>
           </span>
         </div>
 
         {filteredClauses.length === 0 ? (
-          <div className="card" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
-            <p style={{ fontSize: '1.1rem', margin: 0 }}>No clauses match your selected search or filter criteria.</p>
+          <div className="dashboard-section-card diff-empty-state">
+            <div className="empty-icon">🔍</div>
+            <p className="empty-text">No clauses match your selected search query or diff filter criteria.</p>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm mt-3"
+              onClick={() => {
+                setFilterStatus('all')
+                setFilterRisk('all')
+                setSearchQuery('')
+              }}
+            >
+              Reset Filters
+            </button>
           </div>
         ) : (
-          <div className="diff-clauses-list" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div className="diff-clauses-list">
             {filteredClauses.map((clause) => (
-              <div key={clause.clause_id} className={`card clause-diff-card clause-status-${clause.diff_status}`}>
+              <div key={clause.clause_id} className={`dashboard-section-card clause-diff-card clause-status-${clause.diff_status}`}>
                 {/* Clause Card Header */}
                 <div className="clause-card-header">
                   <div className="clause-header-left">
                     <span className={getStatusBadgeClass(clause.diff_status)}>
-                      {clause.diff_status === 'modified' && '[~] MODIFIED'}
-                      {clause.diff_status === 'added' && '[+] ADDED'}
-                      {clause.diff_status === 'removed' && '[-] SUPERSEDED'}
-                      {clause.diff_status === 'unchanged' && '[=] UNCHANGED'}
+                      {clause.diff_status === 'modified' && '● MODIFIED'}
+                      {clause.diff_status === 'added' && '+ ADDED'}
+                      {clause.diff_status === 'removed' && '- SUPERSEDED'}
+                      {clause.diff_status === 'unchanged' && '= UNCHANGED'}
                     </span>
                     <span className="clause-id-title">{clause.clause_id}</span>
                     <span className="clause-section-name">— {clause.section}</span>
@@ -521,7 +591,7 @@ export default function RegulatoryDiffPage() {
 
                   <div className="clause-header-right">
                     <span className={getRiskBadgeClass(clause.risk_level)}>
-                      {clause.risk_level.toUpperCase()} RISK
+                      {clause.risk_level === 'critical' ? '🔥 CRITICAL RISK' : clause.risk_level.toUpperCase() + ' RISK'}
                     </span>
                   </div>
                 </div>
@@ -529,7 +599,10 @@ export default function RegulatoryDiffPage() {
                 {/* Parameter Shift Callout Chip */}
                 {clause.parameter_change && (
                   <div className="parameter-shift-callout">
-                    <span style={{ fontWeight: 600 }}>⚡ Key Parameter Shift:</span> {clause.parameter_change}
+                    <div className="shift-callout-icon">⚡</div>
+                    <div>
+                      <span className="shift-callout-label">Key Parameter Shift:</span> {clause.parameter_change}
+                    </div>
                   </div>
                 )}
 
@@ -538,7 +611,7 @@ export default function RegulatoryDiffPage() {
                   <div className="diff-split-container">
                     <div className="diff-pane diff-pane-old">
                       <div className="diff-pane-title">
-                        <span>Baseline Clause ({activePreset.baseline_id})</span>
+                        <span>📜 Baseline Clause ({activePreset.baseline_id})</span>
                         {clause.diff_status === 'removed' && <span className="tag-danger">Superseded</span>}
                       </div>
                       <div className="diff-pane-content">
@@ -552,8 +625,9 @@ export default function RegulatoryDiffPage() {
 
                     <div className="diff-pane diff-pane-new">
                       <div className="diff-pane-title">
-                        <span>Governing Clause ({activePreset.target_id})</span>
+                        <span>🎯 Governing Clause ({activePreset.target_id})</span>
                         {clause.diff_status === 'added' && <span className="tag-success">New Requirement</span>}
+                        {clause.diff_status === 'modified' && <span className="tag-active">Active Mandate</span>}
                       </div>
                       <div className="diff-pane-content">
                         {clause.new_text ? (
@@ -584,17 +658,19 @@ export default function RegulatoryDiffPage() {
                 {/* Card Footer Actions & Affected Departments */}
                 <div className="clause-card-footer">
                   <div className="affected-deps">
-                    <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Affected Systems:</span>
+                    <span className="deps-label">Affected Systems & Teams:</span>
                     {clause.affected_departments.map((dept, i) => (
                       <span key={i} className="dep-chip">
-                        {dept}
+                        <span className="dep-chip-icon">{getDeptIcon(dept)}</span> {dept}
                       </span>
                     ))}
                   </div>
 
                   <div className="action-required-box">
-                    <span style={{ fontWeight: 600, color: 'var(--color-primary-dark)' }}>Action Required:</span>{' '}
-                    {clause.action_required}
+                    <span className="action-icon">🎯</span>
+                    <div>
+                      <span className="action-label">Action Required:</span> {clause.action_required}
+                    </div>
                   </div>
                 </div>
               </div>
