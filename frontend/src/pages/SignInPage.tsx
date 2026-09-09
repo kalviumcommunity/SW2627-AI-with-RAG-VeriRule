@@ -91,47 +91,67 @@ function SignInPage() {
   }
 
   return (
-    <>
-      <div className="bg-mesh" aria-hidden="true">
-        <div className="bg-mesh-mid" />
-      </div>
-      <div className="bg-grid" aria-hidden="true" />
+    <div className="auth-page">
+      {/* Background decoration */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%)',
+        zIndex: -1,
+      }} />
 
-      <div className="auth-shell">
-        <div className="auth-card glass animate-up delay-1">
-          {/* Logo */}
+      <div style={{
+        position: 'fixed',
+        top: '10%',
+        right: '-5%',
+        width: '600px',
+        height: '600px',
+        background: 'radial-gradient(circle, rgba(77, 133, 255, 0.08) 0%, transparent 70%)',
+        borderRadius: '50%',
+        zIndex: -1,
+      }} />
+
+      <div className="auth-container">
+        <div className="auth-card" style={{ animation: 'slideUp 0.6s ease-out' }}>
+          {/* Logo & Brand */}
           <Link to="/" className="auth-logo" aria-label="Return to VeriRule home">
-            <img src="/logo.svg" alt="VeriRule logo" className="auth-logo-icon" />
-            <span className="auth-logo-name">VeriRule</span>
+            <div className="navbar-brand-icon" />
+            <span style={{ fontSize: '1.1rem', fontWeight: 800 }}>VeriRule</span>
           </Link>
 
           {/* Headings */}
-          <h1 className="auth-heading">Welcome back</h1>
-          <p className="auth-subheading">
-            Sign in to your VeriRule account to access your compliance intelligence workspace.
-          </p>
+          <div style={{ marginBottom: '2rem' }}>
+            <h1 className="auth-heading">Welcome back</h1>
+            <p className="auth-subheading">
+              Sign in to your account to access your compliance intelligence workspace.
+            </p>
+          </div>
 
-          {/* General error */}
+          {/* Error Alert */}
           {errors.general && (
             <div
               role="alert"
+              className="card"
               style={{
-                background: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.75rem 1rem',
-                marginBottom: '1rem',
-                fontSize: '0.85rem',
-                color: '#991b1b',
+                background: '#FEF2F2',
+                border: '1px solid #FECACA',
+                borderLeft: '4px solid #EF4444',
+                color: '#991B1B',
+                marginBottom: '1.5rem',
+                padding: '1rem',
+                fontSize: '0.9rem',
               }}
             >
-              {errors.general}
+              ⚠️ {errors.general}
             </div>
           )}
 
           {/* Form */}
           <form className="auth-form" onSubmit={handleSubmit} noValidate aria-label="Sign in form">
-            {/* Email */}
+            {/* Email Field */}
             <div className="form-group">
               <label htmlFor="signin-email" className="form-label">Work Email</label>
               <input
@@ -145,17 +165,30 @@ function SignInPage() {
                 autoComplete="email"
                 aria-describedby={errors.email ? 'signin-email-error' : undefined}
                 aria-invalid={!!errors.email}
+                style={{
+                  fontSize: '1rem',
+                }}
               />
               {errors.email && (
                 <span id="signin-email-error" className="form-error" role="alert">
-                  ⚠ {errors.email}
+                  {errors.email}
                 </span>
               )}
             </div>
 
-            {/* Password */}
+            {/* Password Field */}
             <div className="form-group">
-              <label htmlFor="signin-password" className="form-label">Password</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label htmlFor="signin-password" className="form-label">Password</label>
+                <a href="#" style={{
+                  fontSize: '0.8rem',
+                  color: 'var(--primary)',
+                  fontWeight: 600,
+                  textDecoration: 'underline',
+                }}>
+                  Forgot password?
+                </a>
+              </div>
               <div className="input-wrapper">
                 <input
                   id="signin-password"
@@ -172,7 +205,19 @@ function SignInPage() {
                 />
                 <button
                   type="button"
-                  className="input-icon-right"
+                  style={{
+                    position: 'absolute',
+                    right: '1rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-quaternary)',
+                    padding: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
@@ -181,46 +226,49 @@ function SignInPage() {
               </div>
               {errors.password && (
                 <span id="signin-password-error" className="form-error" role="alert">
-                  ⚠ {errors.password}
+                  {errors.password}
                 </span>
               )}
-              <a href="#" className="auth-forgot">Forgot password?</a>
             </div>
 
-            {/* Submit */}
+            {/* Sign In Button */}
             <button
               type="submit"
               id="signin-submit"
-              className={`btn btn-primary btn-full${loading ? ' btn-loading' : ''}`}
+              className={`btn btn-primary btn-full btn-lg${loading ? ' btn-loading' : ''}`}
               disabled={loading}
               aria-busy={loading}
+              style={{ marginTop: '0.5rem' }}
             >
               {!loading && 'Sign in'}
             </button>
           </form>
 
           {/* Divider */}
-          <div className="divider" style={{ margin: '1.5rem 0' }}>or continue with</div>
+          <div className="auth-divider" style={{ margin: '2rem 0' }}>
+            <span>or continue with</span>
+          </div>
 
-          {/* Google OAuth */}
+          {/* Google OAuth Button */}
           <button
             type="button"
             id="signin-google"
-            className="btn-oauth"
+            className="btn btn-secondary btn-full btn-lg"
             onClick={() => alert('Google OAuth – connect to your backend auth provider.')}
+            style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}
           >
             <GoogleIcon />
-            Continue with Google
+            <span>Continue with Google</span>
           </button>
 
-          {/* Footer link */}
-          <p className="auth-footer-text">
+          {/* Sign Up Link */}
+          <div className="auth-footer" style={{ marginTop: '1.5rem' }}>
             Don't have an account?{' '}
-            <Link to="/signup">Create one free</Link>
-          </p>
+            <Link to="/signup" style={{ fontWeight: 700 }}>Create one free</Link>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

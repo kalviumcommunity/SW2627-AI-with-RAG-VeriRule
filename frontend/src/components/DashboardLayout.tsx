@@ -63,24 +63,61 @@ function NavLink({ item, path }: { item: NavItem; path: string }) {
     ? path === item.to || path === item.to + '/'
     : path.startsWith(item.to)
 
-  const badgeClass =
-    item.badgeColor === 'green' ? 'sidebar-badge-green'
-    : item.badgeColor === 'blue' ? 'sidebar-badge-blue'
-    : item.badgeColor === 'violet' ? 'sidebar-badge-violet'
-    : 'sidebar-badge-gray'
-
   return (
     <Link
       to={item.to}
-      className={`sidebar-nav-item${isActive ? ' active' : ''}`}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0.75rem 1rem',
+        borderRadius: '8px',
+        fontSize: '0.9rem',
+        fontWeight: 500,
+        color: isActive ? '#4D85FF' : '#4B5563',
+        textDecoration: 'none',
+        background: isActive ? 'rgba(77, 133, 255, 0.1)' : 'transparent',
+        transition: 'all 150ms ease',
+        position: 'relative',
+        margin: '0.25rem 0',
+      }}
+      onMouseEnter={(e) => {
+        if (!isActive) {
+          e.currentTarget.style.background = '#F3F4F6';
+          e.currentTarget.style.color = '#111827';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isActive) {
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.color = '#4B5563';
+        }
+      }}
       aria-current={isActive ? 'page' : undefined}
     >
-      <div className="sidebar-nav-left">
-        <span className="sidebar-icon">{item.icon}</span>
-        <span className="sidebar-label">{item.label}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <span style={{ width: '18px', height: '18px', display: 'flex', flexShrink: 0 }}>
+          {item.icon}
+        </span>
+        <span>{item.label}</span>
       </div>
       {item.badge && (
-        <span className={`sidebar-badge ${badgeClass}`}>{item.badge}</span>
+        <span style={{
+          padding: '0.2rem 0.5rem',
+          borderRadius: '4px',
+          fontSize: '0.65rem',
+          fontWeight: 700,
+          background: item.badgeColor === 'green' ? 'rgba(16, 185, 129, 0.1)'
+            : item.badgeColor === 'blue' ? 'rgba(59, 130, 246, 0.1)'
+            : item.badgeColor === 'violet' ? 'rgba(124, 58, 237, 0.1)'
+            : 'rgba(77, 133, 255, 0.1)',
+          color: item.badgeColor === 'green' ? '#10B981'
+            : item.badgeColor === 'blue' ? '#3B82F6'
+            : item.badgeColor === 'violet' ? '#7C3AED'
+            : '#4D85FF',
+        }}>
+          {item.badge}
+        </span>
       )}
     </Link>
   )
@@ -105,14 +142,42 @@ export default function DashboardLayout() {
   }, [path])
 
   return (
-    <div className="dashboard-layout">
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+      background: '#F9FAFB',
+    }}>
 
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <header className="dashboard-header">
-        <div className="dashboard-header-left">
+      {/* ── Professional Header ────────────────────────────────── */}
+      <header style={{
+        background: 'white',
+        borderBottom: '1px solid #E5E7EB',
+        padding: '0 1.5rem',
+        height: '64px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '1rem',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flex: 1, minWidth: 0 }}>
           <button
             type="button"
-            className={`dashboard-menu-toggle ${sidebarOpen ? 'is-open' : ''}`}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#374151',
+              width: '24px',
+              height: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0.5rem',
+            }}
             onClick={() => setSidebarOpen((open) => !open)}
             aria-label={sidebarOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={sidebarOpen}
@@ -120,97 +185,308 @@ export default function DashboardLayout() {
             {sidebarOpen ? icons.close : icons.menu}
           </button>
 
-          <Link to="/" className="logo-wrap" aria-label="VeriRule home">
-            <img src="/logo.svg" alt="VeriRule logo" className="logo-icon" />
-            <span className="logo-name">
-              Veri<span>Rule</span>
-            </span>
+          <Link to="/dashboard" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            textDecoration: 'none',
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            color: '#111827',
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              background: 'linear-gradient(135deg, #4D85FF, #14B8A6)',
+              borderRadius: '8px',
+            }} />
+            <span>VeriRule</span>
           </Link>
         </div>
 
-        {/* Search bar */}
-        <div className="header-search-wrap">
-          <span className="header-search-icon">{icons.search}</span>
+        {/* Search Bar */}
+        <div style={{
+          flex: 1,
+          maxWidth: '500px',
+          display: 'flex',
+          alignItems: 'center',
+          background: '#F3F4F6',
+          border: '1.5px solid #E5E7EB',
+          borderRadius: '12px',
+          padding: '0.75rem 1rem',
+          gap: '0.5rem',
+        }}>
+          <span style={{ color: '#6B7280', width: '18px', height: '18px', display: 'flex', flexShrink: 0 }}>
+            {icons.search}
+          </span>
           <input
             type="search"
-            className="header-search-input"
-            placeholder="Search regulations, circulars, rules…"
+            style={{
+              flex: 1,
+              border: 'none',
+              background: 'none',
+              outline: 'none',
+              fontSize: '0.9rem',
+              color: '#111827',
+            }}
+            placeholder="Search regulations…"
             aria-label="Global search"
           />
-          <kbd className="header-search-kbd">⌘K</kbd>
+          <kbd style={{
+            fontSize: '0.7rem',
+            background: '#E5E7EB',
+            color: '#4B5563',
+            padding: '0.3rem 0.6rem',
+            borderRadius: '4px',
+            fontWeight: 600,
+          }}>
+            ⌘K
+          </kbd>
         </div>
 
-        <div className="dashboard-header-right">
-          {/* Notification bell */}
-          <button type="button" className="header-icon-btn" aria-label="Notifications">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {/* Notification Bell */}
+          <button
+            type="button"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#4B5563',
+              width: '24px',
+              height: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              position: 'relative',
+              padding: '0.5rem',
+            }}
+            aria-label="Notifications"
+          >
             {icons.bell}
-            <span className="notif-dot" aria-hidden="true" />
+            <span style={{
+              position: 'absolute',
+              width: '8px',
+              height: '8px',
+              background: '#10B981',
+              borderRadius: '50%',
+              top: '4px',
+              right: '2px',
+            }} />
           </button>
 
-          {/* User badge */}
-          <div className="dashboard-user-badge">
-            <div className="user-avatar" aria-hidden="true">{avatarInitial}</div>
-            <div className="user-info">
-              <span className="user-name">{user.name}</span>
-              <span className="user-role">{user.role}</span>
+          {/* User Badge */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            paddingRight: '1rem',
+            borderRight: '1px solid #E5E7EB',
+          }}>
+            <div style={{
+              width: '36px',
+              height: '36px',
+              background: 'linear-gradient(135deg, #4D85FF, #7C3AED)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+            }}>
+              {avatarInitial}
+            </div>
+            <div style={{ lineHeight: 1.3 }}>
+              <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#111827' }}>{user.name}</div>
+              <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{user.role}</div>
             </div>
           </div>
 
           <button
             type="button"
             onClick={handleSignOut}
-            className="btn btn-secondary btn-sm"
+            style={{
+              background: 'white',
+              border: '1.5px solid #E5E7EB',
+              color: '#374151',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 150ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#F3F4F6';
+              e.currentTarget.style.borderColor = '#D1D5DB';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.borderColor = '#E5E7EB';
+            }}
           >
-            Sign out
+            Sign Out
           </button>
         </div>
       </header>
 
-      {/* ── Body ────────────────────────────────────────────────── */}
-      <div className="dashboard-body">
-        {/* Scrim overlay */}
+      {/* ── Main Layout ──────────────────────────────────────────── */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Sidebar Overlay */}
         <button
           type="button"
-          className={`sidebar-scrim${sidebarOpen ? ' visible' : ''}`}
           onClick={() => setSidebarOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 99,
+            display: sidebarOpen ? 'block' : 'none',
+            cursor: 'pointer',
+            border: 'none',
+          }}
           aria-label="Close navigation menu"
         />
 
         {/* Sidebar */}
-        <aside className={`dashboard-sidebar${sidebarOpen ? ' open' : ''}`} aria-label="Navigation">
-          <div className="sidebar-scroll">
+        <aside style={{
+          width: '280px',
+          background: 'white',
+          borderRight: '1px solid #E5E7EB',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'auto',
+          position: 'fixed',
+          left: 0,
+          top: '64px',
+          height: 'calc(100vh - 64px)',
+          zIndex: 100,
+          transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 250ms ease',
+        }}>
+          <nav style={{ flex: 1, padding: '1.5rem 0.75rem', overflow: 'auto' }}>
+            {/* Main Navigation Group */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                color: '#9CA3AF',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                padding: '0 1rem',
+                marginBottom: '0.75rem',
+              }}>
+                Main
+              </div>
+              {MAIN_NAV.map((item) => <NavLink key={item.to} item={item} path={path} />)}
+            </div>
 
-            <div className="sidebar-group-label">Main</div>
-            {MAIN_NAV.map((item) => <NavLink key={item.to} item={item} path={path} />)}
+            {/* Governance Group */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                color: '#9CA3AF',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                padding: '0 1rem',
+                marginBottom: '0.75rem',
+              }}>
+                Governance & Compliance
+              </div>
+              {GOVERNANCE_NAV.map((item) => <NavLink key={item.to} item={item} path={path} />)}
+            </div>
 
-            <div className="sidebar-group-label">Governance</div>
-            {GOVERNANCE_NAV.map((item) => <NavLink key={item.to} item={item} path={path} />)}
-
-            <div className="sidebar-group-label">Analytics</div>
-            {ANALYTICS_NAV.map((item) => <NavLink key={item.to} item={item} path={path} />)}
-          </div>
+            {/* Analytics Group */}
+            <div>
+              <div style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                color: '#9CA3AF',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                padding: '0 1rem',
+                marginBottom: '0.75rem',
+              }}>
+                Analytics & Reporting
+              </div>
+              {ANALYTICS_NAV.map((item) => <NavLink key={item.to} item={item} path={path} />)}
+            </div>
+          </nav>
 
           {/* Sidebar Footer */}
-          <div className="sidebar-footer">
+          <div style={{
+            padding: '1rem 0.75rem',
+            borderTop: '1px solid #E5E7EB',
+            background: '#FAFBFC',
+          }}>
             <Link
               to="/dashboard/settings"
-              className={`sidebar-nav-item${path.startsWith('/dashboard/settings') ? ' active' : ''}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                color: '#4B5563',
+                textDecoration: 'none',
+                transition: 'all 150ms ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#F3F4F6';
+                e.currentTarget.style.color = '#111827';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = '#4B5563';
+              }}
             >
-              <div className="sidebar-nav-left">
-                <span className="sidebar-icon">{icons.settings}</span>
-                <span className="sidebar-label">Settings</span>
-              </div>
+              <span style={{ width: '18px', height: '18px', display: 'flex' }}>{icons.settings}</span>
+              <span>Settings</span>
             </Link>
-            <button type="button" className="sidebar-nav-item sidebar-logout-btn" onClick={handleSignOut}>
-              <div className="sidebar-nav-left">
-                <span className="sidebar-icon">{icons.logout}</span>
-                <span className="sidebar-label">Sign Out</span>
-              </div>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                color: '#4B5563',
+                background: 'none',
+                cursor: 'pointer',
+                transition: 'all 150ms ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#FEF2F2';
+                e.currentTarget.style.color = '#DC2626';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = '#4B5563';
+              }}
+            >
+              <span style={{ width: '18px', height: '18px', display: 'flex' }}>{icons.logout}</span>
+              <span>Sign Out</span>
             </button>
           </div>
         </aside>
 
-        <main className="dashboard-content">
+        {/* Main Content */}
+        <main style={{
+          flex: 1,
+          marginLeft: sidebarOpen ? '280px' : 0,
+          overflow: 'auto',
+          transition: 'margin-left 250ms ease',
+        }}>
           <Outlet />
         </main>
       </div>
