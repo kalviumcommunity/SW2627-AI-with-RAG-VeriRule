@@ -117,166 +117,483 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
 
-      {/* ── Welcome ──────────────────────────────────────────────────── */}
-      <div className="dashboard-welcome">
-        <h1>Welcome back, {firstName}</h1>
-        <p>Here's an overview of your regulatory compliance workspace.</p>
+      {/* Welcome Header */}
+      <div style={{ marginBottom: '2.5rem' }}>
+        <h1 style={{
+          fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
+          fontWeight: 800,
+          marginBottom: '0.5rem',
+          background: 'linear-gradient(135deg, #111827, #4D85FF)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}>
+          Welcome back, {firstName}
+        </h1>
+        <p style={{
+          fontSize: '1rem',
+          color: '#4B5563',
+          marginBottom: '1.5rem',
+        }}>
+          Your regulatory compliance intelligence dashboard
+        </p>
       </div>
 
-      {/* ── Live Metrics ─────────────────────────────────────────────── */}
-      <div className="metrics-grid">
+      {/* KPI Metrics Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '1.5rem',
+        marginBottom: '2.5rem',
+      }}>
         {liveMetrics.map((m) => (
-          <div key={m.title} className="metric-card">
-            <div className="metric-header">
-              <span className="metric-title">{m.title}</span>
-              <div className="metric-icon-wrap">{m.icon}</div>
+          <div key={m.title} style={{
+            background: 'white',
+            border: '1px solid #E5E7EB',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            transition: 'all 250ms ease',
+            cursor: 'pointer',
+          }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#D1D5DB';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#E5E7EB';
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {m.title}
+              </span>
+              <span style={{ fontSize: '1.5rem' }}>{m.icon}</span>
             </div>
-            <div className="metric-value">{m.value}</div>
-            <div className="metric-sub">{m.sub}</div>
+            <div style={{
+              fontSize: '2rem',
+              fontWeight: 800,
+              color: '#111827',
+              marginBottom: '0.5rem',
+            }}>
+              {m.value}
+            </div>
+            <div style={{ fontSize: '0.85rem', color: '#9CA3AF' }}>
+              {m.sub}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* ── Compliance Risk Heatmap ──────────────────────────────────── */}
-      <div className="dashboard-section-card" style={{ marginBottom: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+      {/* Compliance Risk Heatmap */}
+      <div style={{
+        background: 'white',
+        border: '1px solid #E5E7EB',
+        borderRadius: '16px',
+        padding: '2rem',
+        marginBottom: '2.5rem',
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1.5rem',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}>
           <div>
-            <h2 className="section-card-title" style={{ margin: '0 0 0.15rem 0' }}>Compliance Risk Heatmap</h2>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            <h2 style={{
+              fontSize: '1.25rem',
+              fontWeight: 700,
+              marginBottom: '0.3rem',
+            }}>
+              Compliance Risk Heatmap
+            </h2>
+            <p style={{
+              fontSize: '0.85rem',
+              color: '#6B7280',
+            }}>
               At-a-glance compliance exposure by transaction category
-            </span>
+            </p>
           </div>
-          <Link to="/dashboard/rule-verifier" className="btn btn-ghost btn-sm">
+          <Link to="/dashboard/rule-verifier" style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.65rem 1.2rem',
+            background: 'white',
+            border: '1.5px solid #E5E7EB',
+            borderRadius: '8px',
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            color: '#4D85FF',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            transition: 'all 150ms ease',
+          }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#4D85FF';
+              e.currentTarget.style.background = 'rgba(77, 133, 255, 0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#E5E7EB';
+              e.currentTarget.style.background = 'white';
+            }}
+          >
             Open Rule Verifier →
           </Link>
         </div>
 
-        <div className="risk-heatmap-grid">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '1rem',
+          marginBottom: '1.5rem',
+        }}>
           {RISK_HEATMAP.map((cell) => {
             const colors = getRiskColor(cell.riskLevel)
             return (
               <Link
                 key={cell.category}
                 to="/dashboard/rule-verifier"
-                className="risk-heatmap-cell"
                 style={{
                   background: colors.bg,
-                  borderColor: colors.border,
+                  border: `1.5px solid ${colors.border}`,
+                  borderRadius: '12px',
+                  padding: '1.25rem',
+                  textDecoration: 'none',
+                  transition: 'all 150ms ease',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <div className="risk-cell-header">
-                  <span className="risk-cell-label">{cell.label}</span>
-                  <span className="risk-level-dot" style={{ background: colors.dot }} />
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '1rem',
+                }}>
+                  <span style={{
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    color: colors.text,
+                  }}>
+                    {cell.label}
+                  </span>
+                  <span style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: colors.dot,
+                  }} />
                 </div>
-                <div className="risk-cell-stats">
-                  <div className="risk-stat">
-                    <span className="risk-stat-value" style={{ color: '#10b981' }}>{cell.activeRules}</span>
-                    <span className="risk-stat-label">Active</span>
+                <div style={{
+                  display: 'flex',
+                  gap: '1.5rem',
+                  marginBottom: '1rem',
+                }}>
+                  <div>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 800,
+                      color: '#10B981',
+                    }}>
+                      {cell.activeRules}
+                    </div>
+                    <div style={{
+                      fontSize: '0.75rem',
+                      color: colors.text,
+                      fontWeight: 600,
+                    }}>
+                      Active
+                    </div>
                   </div>
-                  <div className="risk-stat">
-                    <span className="risk-stat-value" style={{ color: cell.supersededRules > 0 ? '#ef4444' : '#9ca3af' }}>
+                  <div>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 800,
+                      color: cell.supersededRules > 0 ? '#EF4444' : '#9CA3AF',
+                    }}>
                       {cell.supersededRules}
-                    </span>
-                    <span className="risk-stat-label">Superseded</span>
+                    </div>
+                    <div style={{
+                      fontSize: '0.75rem',
+                      color: colors.text,
+                      fontWeight: 600,
+                    }}>
+                      Superseded
+                    </div>
                   </div>
                 </div>
-                <div className="risk-level-badge" style={{ color: colors.text, background: colors.border }}>
+                <div style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  color: colors.text,
+                  background: colors.border,
+                  padding: '0.5rem 0.75rem',
+                  borderRadius: '6px',
+                  textAlign: 'center',
+                }}>
                   {cell.riskLevel === 'high'
                     ? '⚠ Conflict Detected'
                     : cell.riskLevel === 'medium'
-                    ? '⏳ Pending Review'
-                    : '✓ Compliant'}
+                      ? '⏳ Pending Review'
+                      : '✓ Compliant'}
                 </div>
               </Link>
             )
           })}
         </div>
 
-        <div className="heatmap-legend">
-          <div className="legend-item">
-            <span className="legend-dot" style={{ background: '#10b981' }} />
-            <span>Compliant — No unresolved conflicts</span>
+        <div style={{
+          display: 'flex',
+          gap: '1.5rem',
+          paddingTop: '1.5rem',
+          borderTop: '1px solid #E5E7EB',
+          flexWrap: 'wrap',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#4B5563' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981' }} />
+            Compliant — No unresolved conflicts
           </div>
-          <div className="legend-item">
-            <span className="legend-dot" style={{ background: '#f59e0b' }} />
-            <span>Pending Review — Recent regulatory updates</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#4B5563' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#F59E0B' }} />
+            Pending Review — Recent regulatory updates
           </div>
-          <div className="legend-item">
-            <span className="legend-dot" style={{ background: '#ef4444' }} />
-            <span>Conflict Detected — Active + superseded rules coexist</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#4B5563' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#EF4444' }} />
+            Conflict Detected — Active + superseded rules coexist
           </div>
         </div>
       </div>
 
-      {/* ── Two Column: Authority Coverage + Quick Access ─────────── */}
-      <div className="dashboard-overview-grid">
-
+      {/* Two-Column Section: Authority Coverage & Quick Access */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+        gap: '2rem',
+      }}>
         {/* Authority Distribution */}
-        <div className="dashboard-section-card" style={{ marginBottom: 0 }}>
-          <h2 className="section-card-title">Regulatory Authority Coverage</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <div style={{
+          background: 'white',
+          border: '1px solid #E5E7EB',
+          borderRadius: '16px',
+          padding: '2rem',
+        }}>
+          <h2 style={{
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            marginBottom: '1.5rem',
+          }}>
+            Regulatory Authority Coverage
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {authorities.map((a) => (
               <div key={a.name}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '0.3rem' }}>
-                  <span style={{ fontWeight: 500, color: 'var(--text-main)' }}>{a.name}</span>
-                  <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>{a.pct}%</span>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: '0.85rem',
+                  marginBottom: '0.5rem',
+                }}>
+                  <span style={{ fontWeight: 600, color: '#111827' }}>{a.name}</span>
+                  <span style={{ fontWeight: 700, color: '#4D85FF' }}>{a.pct}%</span>
                 </div>
-                <div style={{ width: '100%', height: '6px', background: '#f1f3f6', borderRadius: '999px', overflow: 'hidden' }}>
-                  <div style={{ width: `${a.pct}%`, height: '100%', background: a.color, borderRadius: '999px', transition: 'width 0.6s ease' }} />
+                <div style={{
+                  width: '100%',
+                  height: '8px',
+                  background: '#F3F4F6',
+                  borderRadius: '999px',
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    width: `${a.pct}%`,
+                    height: '100%',
+                    background: a.color,
+                    borderRadius: '999px',
+                    transition: 'width 0.6s ease',
+                  }} />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Quick Access Cards */}
-        <div className="dashboard-section-card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div>
-            <h2 className="section-card-title">Quick Access</h2>
-            <div className="quick-access-links">
-              <Link to="/dashboard/rule-verifier" className="quick-access-item">
-                <span className="qa-icon">🎯</span>
-                <div>
-                  <strong>Rule Verifier</strong>
-                  <span>Verify transaction compliance & generate proof</span>
-                </div>
-              </Link>
-              <Link to="/dashboard/rule-timeline" className="quick-access-item">
-                <span className="qa-icon">📅</span>
-                <div>
-                  <strong>Rule Timeline</strong>
-                  <span>Trace supersession chains across directives</span>
-                </div>
-              </Link>
-              <Link to="/dashboard/query-engine" className="quick-access-item">
-                <span className="qa-icon">⚡</span>
-                <div>
-                  <strong>AI Query Engine</strong>
-                  <span>Natural language compliance search</span>
-                </div>
-              </Link>
-              <Link to="/dashboard/documents" className="quick-access-item">
-                <span className="qa-icon">📁</span>
-                <div>
-                  <strong>Document Repository</strong>
-                  <span>Upload & manage regulatory documents</span>
-                </div>
-              </Link>
+        {/* Quick Access */}
+        <div style={{
+          background: 'white',
+          border: '1px solid #E5E7EB',
+          borderRadius: '16px',
+          padding: '2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+        }}>
+          <h2 style={{
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            marginBottom: '0.5rem',
+          }}>
+            Quick Access
+          </h2>
+          <Link
+            to="/dashboard/rule-verifier"
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              padding: '1.25rem',
+              background: '#F9FAFB',
+              border: '1px solid #E5E7EB',
+              borderRadius: '12px',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'all 150ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#F3F4F6';
+              e.currentTarget.style.borderColor = '#D1D5DB';
+              e.currentTarget.style.transform = 'translateX(4px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#F9FAFB';
+              e.currentTarget.style.borderColor = '#E5E7EB';
+              e.currentTarget.style.transform = 'translateX(0)';
+            }}
+          >
+            <span style={{ fontSize: '1.5rem' }}>🎯</span>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                color: '#111827',
+                marginBottom: '0.2rem',
+              }}>
+                Rule Verifier
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#6B7280' }}>
+                Verify transaction compliance
+              </div>
             </div>
-          </div>
+          </Link>
+          <Link
+            to="/dashboard/rule-timeline"
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              padding: '1.25rem',
+              background: '#F9FAFB',
+              border: '1px solid #E5E7EB',
+              borderRadius: '12px',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'all 150ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#F3F4F6';
+              e.currentTarget.style.borderColor = '#D1D5DB';
+              e.currentTarget.style.transform = 'translateX(4px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#F9FAFB';
+              e.currentTarget.style.borderColor = '#E5E7EB';
+              e.currentTarget.style.transform = 'translateX(0)';
+            }}
+          >
+            <span style={{ fontSize: '1.5rem' }}>📅</span>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                color: '#111827',
+                marginBottom: '0.2rem',
+              }}>
+                Rule Timeline
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#6B7280' }}>
+                Trace regulatory changes
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/dashboard/chat"
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              padding: '1.25rem',
+              background: '#F9FAFB',
+              border: '1px solid #E5E7EB',
+              borderRadius: '12px',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'all 150ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#F3F4F6';
+              e.currentTarget.style.borderColor = '#D1D5DB';
+              e.currentTarget.style.transform = 'translateX(4px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#F9FAFB';
+              e.currentTarget.style.borderColor = '#E5E7EB';
+              e.currentTarget.style.transform = 'translateX(0)';
+            }}
+          >
+            <span style={{ fontSize: '1.5rem' }}>💬</span>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                color: '#111827',
+                marginBottom: '0.2rem',
+              }}>
+                Compliance Chat
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#6B7280' }}>
+                Ask AI compliance questions
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
-
       {/* ── Recently Indexed Documents (live) ──────────────────────── */}
-      <div className="dashboard-section-card" style={{ marginBottom: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
-          <h2 className="section-card-title" style={{ margin: 0 }}>Recently Indexed Documents</h2>
-          <Link to="/dashboard/documents" className="btn btn-ghost btn-sm">
+      <div
+        className="dashboard-section-card"
+        style={{ marginBottom: 0 }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '0.85rem',
+          }}
+        >
+          <h2
+            className="section-card-title"
+            style={{ margin: 0 }}
+          >
+            Recently Indexed Documents
+          </h2>
+
+          <Link
+            to="/dashboard/documents"
+            className="btn btn-ghost btn-sm"
+          >
             View all →
           </Link>
         </div>
+
         <div className="circulars-table-wrapper">
           <table className="circulars-table">
             <thead>
@@ -288,25 +605,61 @@ export default function DashboardPage() {
                 <th>Effective Date</th>
               </tr>
             </thead>
+
             <tbody>
               {(loading ? [] : documents.slice(0, 5)).map((doc) => (
                 <tr key={doc.document_id}>
-                  <td style={{ fontWeight: 600, fontFamily: "'JetBrains Mono', monospace", fontSize: '0.82rem', color: '#4f46e5' }}>
+                  <td
+                    style={{
+                      fontWeight: 600,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '0.82rem',
+                      color: '#4f46e5',
+                    }}
+                  >
                     {doc.document_id}
                   </td>
-                  <td style={{ fontWeight: 500 }}>{doc.title}</td>
-                  <td style={{ color: 'var(--text-muted)' }}>{doc.authority || 'N/A'}</td>
+
+                  <td style={{ fontWeight: 500 }}>
+                    {doc.title}
+                  </td>
+
+                  <td style={{ color: 'var(--text-muted)' }}>
+                    {doc.authority || 'N/A'}
+                  </td>
+
                   <td>
-                    <span className={`badge-status ${doc.status === 'active' ? 'badge-active' : 'badge-superseded'}`}>
+                    <span
+                      className={`badge-status ${doc.status === 'active'
+                          ? 'badge-active'
+                          : 'badge-superseded'
+                        }`}
+                    >
                       {doc.status}
                     </span>
                   </td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '0.84rem' }}>{doc.effective_date || 'N/A'}</td>
+
+                  <td
+                    style={{
+                      color: 'var(--text-muted)',
+                      fontSize: '0.84rem',
+                    }}
+                  >
+                    {doc.effective_date || 'N/A'}
+                  </td>
                 </tr>
               ))}
+
               {loading && (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                  <td
+                    colSpan={5}
+                    style={{
+                      textAlign: 'center',
+                      padding: '2rem',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
                     Loading document inventory...
                   </td>
                 </tr>

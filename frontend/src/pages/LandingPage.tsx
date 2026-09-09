@@ -71,218 +71,675 @@ const stages = [
   },
 ]
 
-const stats = [
-  { value: '100%', label: 'Source-cited answers' },
-  { value: 'Zero', label: 'Hallucinated guidance' },
-  { value: 'Real-time', label: 'Policy conflict detection' },
-]
+// const stats = [
+//   { value: '100%', label: 'Source-cited answers' },
+//   { value: 'Zero', label: 'Hallucinated guidance' },
+//   { value: 'Real-time', label: 'Policy conflict detection' },
+// ]
 
 function LandingPage() {
   return (
     <>
-      {/* Animated background */}
-      <div className="bg-mesh" aria-hidden="true">
-        <div className="bg-mesh-mid" />
-      </div>
-      <div className="bg-grid" aria-hidden="true" />
+      <div className="page-wrapper">
+        {/* Animated background */}
+        <div className="landing-hero__background" aria-hidden="true" />
 
-      <div className="landing-shell">
-        {/* ── Navbar ─────────────────────────────────────────── */}
-        <header className="topbar">
-          <Link to="/" className="logo-wrap" aria-label="VeriRule home">
-            <img src="/logo.svg" alt="VeriRule shield logo" className="logo-icon" />
-            <span className="logo-name">
-              Veri<span>Rule</span>
-            </span>
-          </Link>
+        <div className="container">
+          {/* Navbar */}
+          <nav className="navbar">
+            <div className="navbar-content">
+              <Link to="/" className="navbar-brand" aria-label="VeriRule home">
+                <div className="navbar-brand-icon" />
+                <span>VeriRule</span>
+              </Link>
 
-          <nav className="desktop-nav" aria-label="Primary navigation">
-            <a href="#platform">Platform</a>
-            <a href="#capabilities">Capabilities</a>
-            <a href="#process">Process</a>
-            <a href="#contact">Contact</a>
+              <ul className="navbar-menu" style={{ listStyle: 'none' }}>
+                <li>
+                  <a href="#platform" className="navbar-link">
+                    Platform
+                  </a>
+                </li>
+                <li>
+                  <a href="#capabilities" className="navbar-link">
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a href="#process" className="navbar-link">
+                    How it Works
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact" className="navbar-link">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+
+              <div className="flex gap-2">
+                <Link to="/signin" className="btn btn-secondary btn-sm">
+                  Sign in
+                </Link>
+                <Link to="/signup" className="btn btn-primary btn-sm">
+                  Get Started
+                </Link>
+              </div>
+            </div>
           </nav>
 
-          <div className="topbar-actions">
-            <Link to="/signin" className="btn btn-secondary btn-sm">
-              Sign in
-            </Link>
-            <Link to="/signup" className="btn btn-primary btn-sm">
-              Get access
-            </Link>
-          </div>
-        </header>
-
-        {/* ── Hero ───────────────────────────────────────────── */}
-        <section className="hero" id="platform" aria-labelledby="hero-title">
-          <div className="nav-pill animate-up delay-1">AI-Powered · Banking Grade</div>
-
-          <h1 id="hero-title" className="hero-headline animate-up delay-2">
-            Compliance decisions
-            <br />
-            <span className="gradient-text">with source confidence</span>
-          </h1>
-
-          <p className="hero-description animate-up delay-3">
-            VeriRule gives your team a single place to ask, verify, and explain compliance rules. Built for banking
-            workflows where evidence quality matters more than confident-sounding text.
-          </p>
-
-          <div className="hero-actions animate-up delay-3">
-            <Link to="/signup" className="btn btn-primary btn-lg">
-              Start free pilot
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </Link>
-            <a href="#capabilities" className="btn btn-ghost btn-lg">
-              See capabilities
-            </a>
-          </div>
-
-          {/* Stats strip */}
-          <div className="stats-strip animate-up delay-4">
-            {stats.map((s) => (
-              <div className="stat-item" key={s.label}>
-                <div className="stat-value">{s.value}</div>
-                <div className="stat-label">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Trust strip ────────────────────────────────────── */}
-        <div className="trust-strip animate-up delay-2" aria-label="Trust indicators">
-          {[
-            'Built for regulated banking environments',
-            'Explainability and traceability first',
-            'Supports compliance, risk, and audit',
-          ].map((item) => (
-            <div className="trust-item" key={item}>
-              <span className="trust-dot" aria-hidden="true" />
-              {item}
-            </div>
-          ))}
-        </div>
-
-        {/* ── Capabilities ───────────────────────────────────── */}
-        <section className="section" id="capabilities" aria-labelledby="cap-title">
-          <div className="section-header">
-            <p className="eyebrow animate-up delay-1">Core capabilities</p>
-            <h2 id="cap-title" className="section-title animate-up delay-2">
-              Everything for compliance-focused
-              <br />AI retrieval
-            </h2>
-            <p className="section-desc animate-up delay-3">
-              From ingestion to citation, VeriRule is purpose-built for the precision that regulated environments demand.
-            </p>
-          </div>
-
-          <div className="capability-grid">
-            {capabilities.map((item, i) => (
-              <article
-                className={`capability-card glass animate-up delay-${(i % 3) + 2}`}
-                key={item.title}
+          {/* Hero */}
+          <section
+            className="landing-hero"
+            id="platform"
+            aria-labelledby="hero-title"
+          >
+            <div className="hero-content">
+              <div
+                className="hero-badge"
+                style={{ animation: 'slideUp 0.6s ease-out' }}
               >
-                <div className="cap-icon" aria-hidden="true">{item.icon}</div>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Process ────────────────────────────────────────── */}
-        <section className="section" id="process" aria-labelledby="process-title">
-          <div className="section-header">
-            <p className="eyebrow animate-up delay-1">How it works</p>
-            <h2 id="process-title" className="section-title animate-up delay-2">
-              A four-stage compliance
-              <br />intelligence flow
-            </h2>
-          </div>
-
-          <div className="stage-grid">
-            {stages.map((item, i) => (
-              <article
-                className={`stage-card glass animate-up delay-${i + 1}`}
-                key={item.step}
-              >
-                <div className="stage-number" aria-label={`Step ${item.step}`}>{item.step}</div>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Audience ───────────────────────────────────────── */}
-        <section className="section" aria-labelledby="audience-title">
-          <div className="section-header">
-            <p className="eyebrow animate-up delay-1">Who benefits</p>
-            <h2 id="audience-title" className="section-title animate-up delay-2">
-              Designed for every decision maker
-              <br />in the compliance chain
-            </h2>
-          </div>
-
-          <div className="audience-grid">
-            {audience.map((item, i) => (
-              <article
-                className={`audience-card glass animate-up delay-${(i % 3) + 1}`}
-                key={item.role}
-              >
-                <div className="audience-tag">{item.tag}</div>
-                <h3>{item.role}</h3>
-                <p>{item.value}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* ── CTA ────────────────────────────────────────────── */}
-        <section className="cta-section" id="contact" aria-labelledby="cta-title">
-          <div className="cta-card animate-up delay-2">
-            <p className="eyebrow" style={{ justifyContent: 'center' }}>Sprint demo ready</p>
-            <h2 id="cta-title">
-              Launch VeriRule with your
-              <br />
-              <span className="gradient-text">compliance document set</span>
-            </h2>
-            <p>
-              Start with a controlled pilot, validate retrieval quality, and present evidence-backed answers in your next
-              regulatory review.
-            </p>
-            <div className="cta-email-row">
-              <input type="email" placeholder="your.email@bank.com" aria-label="Work email address" />
-              <Link to="/signup" className="btn btn-primary">
-                Get pilot access
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Footer ─────────────────────────────────────────── */}
-        <footer>
-          <div className="footer-inner">
-            <div className="footer-left">
-              <Link to="/" className="logo-wrap" aria-label="VeriRule home">
-                <img src="/logo.svg" alt="" className="logo-icon" style={{ width: 28, height: 28 }} />
-                <span className="logo-name" style={{ fontSize: '1rem' }}>
-                  Veri<span>Rule</span>
+                <span className="hero-badge-dot" />
+                <span className="hero-badge-text">
+                  AI-Powered Compliance Intelligence
                 </span>
-              </Link>
-              <p>AI-Powered Regulatory Compliance Intelligence</p>
+              </div>
+
+              <h1
+                id="hero-title"
+                className="hero-title"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.1s both',
+                }}
+              >
+                Compliance decisions backed by evidence, not hunches
+              </h1>
+
+              <p
+                className="hero-description"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.2s both',
+                }}
+              >
+                VeriRule gives compliance teams a secure, auditable way to ask
+                questions about regulatory rules. Every answer includes source
+                citations, confidence levels, and clear flagging of conflicting
+                or superseded guidance. Built for banking workflows where
+                precision matters.
+              </p>
+
+              <div
+                className="hero-actions"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.3s both',
+                }}
+              >
+                <Link to="/signup" className="btn btn-primary btn-lg">
+                  Start Your Pilot
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </Link>
+
+                <a href="#capabilities" className="btn btn-secondary btn-lg">
+                  Explore Features
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* Trust Indicators */}
+          <div
+            className="card card-featured"
+            style={{
+              marginTop: '4rem',
+              marginBottom: '6rem',
+              animation: 'slideUp 0.6s ease-out 0.4s both',
+            }}
+          >
+            <div className="flex justify-between gap-4 flex-wrap">
+              <div className="flex-col gap-1">
+                <div
+                  style={{
+                    fontSize: '2rem',
+                    fontWeight: 800,
+                    color: 'var(--primary)',
+                  }}
+                >
+                  100%
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Source-cited answers
+                </div>
+              </div>
+
+              <div className="flex-col gap-1">
+                <div
+                  style={{
+                    fontSize: '2rem',
+                    fontWeight: 800,
+                    color: 'var(--accent)',
+                  }}
+                >
+                  Zero
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Hallucinated guidance
+                </div>
+              </div>
+
+              <div className="flex-col gap-1">
+                <div
+                  style={{
+                    fontSize: '2rem',
+                    fontWeight: 800,
+                    color: 'var(--primary)',
+                  }}
+                >
+                  Real-time
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Policy conflict detection
+                </div>
+              </div>
+
+              <div className="flex-col gap-1">
+                <div
+                  style={{
+                    fontSize: '2rem',
+                    fontWeight: 800,
+                    color: 'var(--accent)',
+                  }}
+                >
+                  Audit-ready
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Complete trails
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Capabilities */}
+          <section id="capabilities" style={{ scrollMarginTop: '100px' }}>
+            <div className="section-header">
+              <div
+                className="section-header-badge"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.1s both',
+                }}
+              >
+                <span className="section-header-badge-dot" />
+                <span className="section-header-badge-text">
+                  Core Features
+                </span>
+              </div>
+
+              <h2
+                className="section-title"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.2s both',
+                }}
+              >
+                Built for compliance teams that demand precision
+              </h2>
+
+              <p
+                className="section-description"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.3s both',
+                }}
+              >
+                From document ingestion to evidence-backed answers, VeriRule
+                provides enterprise-grade compliance intelligence.
+              </p>
             </div>
 
-            <nav className="footer-links" aria-label="Footer navigation">
-              <a href="#platform">Platform</a>
-              <a href="#capabilities">Capabilities</a>
-              <a href="#process">Process</a>
-              <Link to="/signin">Sign in</Link>
-            </nav>
+            <div className="features-grid">
+              {capabilities.map((item, i) => (
+                <div
+                  className="feature-card"
+                  key={item.title}
+                  style={{
+                    animation: `slideUp 0.6s ease-out ${
+                      0.3 + i * 0.1
+                    }s both`,
+                  }}
+                >
+                  <div className="feature-icon">{item.icon}</div>
+                  <h3 className="feature-title">{item.title}</h3>
+                  <p className="feature-description">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-            <span className="footer-badge">Team 01 · Sprint 2 · Campus Apollo</span>
-          </div>
-        </footer>
+          {/* Process */}
+          <section
+            id="process"
+            style={{
+              marginTop: '8rem',
+              scrollMarginTop: '100px',
+            }}
+          >
+            <div className="section-header">
+              <div
+                className="section-header-badge"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.1s both',
+                }}
+              >
+                <span className="section-header-badge-dot" />
+                <span className="section-header-badge-text">
+                  How It Works
+                </span>
+              </div>
+
+              <h2
+                className="section-title"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.2s both',
+                }}
+              >
+                A proven four-stage compliance intelligence pipeline
+              </h2>
+
+              <p
+                className="section-description"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.3s both',
+                }}
+              >
+                A proven four-stage compliance intelligence pipeline
+              </p>
+            </div>
+
+            <div
+              className="features-grid"
+              style={{ marginTop: '3rem' }}
+            >
+              {stages.map((item, i) => (
+                <div
+                  className="feature-card"
+                  key={item.step}
+                  style={{
+                    animation: `slideUp 0.6s ease-out ${
+                      0.3 + i * 0.1
+                    }s both`,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '50%',
+                      background:
+                        'linear-gradient(135deg, var(--primary), var(--accent))',
+                      color: '#FFF',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 800,
+                      fontSize: '1.1rem',
+                      marginBottom: 'var(--space-4)',
+                      boxShadow: '0 0 25px rgba(77, 133, 255, 0.3)',
+                    }}
+                  >
+                    {item.step}
+                  </div>
+
+                  <h3 className="feature-title">{item.title}</h3>
+                  <p className="feature-description">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Target Audience */}
+          <section
+            style={{
+              marginTop: '8rem',
+              marginBottom: '6rem',
+            }}
+          >
+            <div className="section-header">
+              <div
+                className="section-header-badge"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.1s both',
+                }}
+              >
+                <span className="section-header-badge-dot" />
+                <span className="section-header-badge-text">
+                  Who Benefits
+                </span>
+              </div>
+
+              <h2
+                className="section-title"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.2s both',
+                }}
+              >
+                Built for every compliance decision maker
+              </h2>
+
+              <p
+                className="section-description"
+                style={{
+                  animation: 'slideUp 0.6s ease-out 0.3s both',
+                }}
+              >
+                Risk officers, compliance managers, and audit teams all
+                benefit from evidence-backed, verifiable answers.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns:
+                  'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: '2rem',
+              }}
+            >
+              {audience.map((item, i) => (
+                <div
+                  className="card"
+                  key={item.role}
+                  style={{
+                    animation: `slideUp 0.6s ease-out ${
+                      0.3 + i * 0.1
+                    }s both`,
+                    borderLeft: '4px solid var(--primary)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      background: 'rgba(77, 133, 255, 0.1)',
+                      border: '1px solid rgba(77, 133, 255, 0.2)',
+                      borderRadius: '999px',
+                      padding: '0.4rem 0.9rem',
+                      marginBottom: '0.8rem',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        color: 'var(--primary)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      {item.tag}
+                    </span>
+                  </div>
+
+                  <h3 style={{ marginBottom: '0.6rem' }}>
+                    {item.role}
+                  </h3>
+
+                  <p
+                    style={{
+                      fontSize: '0.95rem',
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* CTA */}
+          <section
+            id="contact"
+            style={{
+              marginBottom: '6rem',
+              scrollMarginTop: '100px',
+            }}
+          >
+            <div
+              className="card card-featured"
+              style={{
+                animation: 'slideUp 0.6s ease-out 0.2s both',
+                padding: 'var(--space-12) var(--space-8)',
+                textAlign: 'center',
+              }}
+            >
+              <div
+                className="section-header-badge"
+                style={{
+                  justifyContent: 'center',
+                  marginBottom: '1.5rem',
+                }}
+              >
+                <span className="section-header-badge-dot" />
+                <span className="section-header-badge-text">
+                  Ready to Launch
+                </span>
+              </div>
+
+              <h2
+                className="section-title"
+                style={{ marginBottom: '1rem' }}
+              >
+                Transform compliance verification with AI you can trust
+              </h2>
+
+              <p
+                className="section-description"
+                style={{
+                  maxWidth: '600px',
+                  margin: '0 auto 2rem',
+                }}
+              >
+                Start with a controlled pilot of VeriRule. We'll help you
+                upload your regulatory documents, test retrieval quality,
+                and demonstrate evidence-backed answers in your next audit.
+              </p>
+
+              <div
+                className="flex gap-4 justify-center flex-wrap"
+                style={{ marginTop: '2rem' }}
+              >
+                <Link to="/signup" className="btn btn-primary btn-lg">
+                  Get Pilot Access
+                </Link>
+
+                <a
+                  href="mailto:contact@verirule.ai"
+                  className="btn btn-secondary btn-lg"
+                >
+                  Contact Sales
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer
+            style={{
+              borderTop: '1px solid var(--border-light)',
+              paddingTop: 'var(--space-12)',
+              paddingBottom: 'var(--space-8)',
+              marginTop: 'var(--space-20)',
+            }}
+          >
+            <div className="flex justify-between items-start gap-8 flex-wrap">
+              <div>
+                <Link
+                  to="/"
+                  className="navbar-brand"
+                  style={{ marginBottom: '1rem' }}
+                >
+                  <div className="navbar-brand-icon" />
+                  <span>VeriRule</span>
+                </Link>
+
+                <p
+                  style={{
+                    fontSize: '0.9rem',
+                    color: 'var(--text-secondary)',
+                    maxWidth: '300px',
+                  }}
+                >
+                  AI-powered regulatory compliance intelligence for banking
+                  and financial services.
+                </p>
+              </div>
+
+              <div>
+                <h4
+                  style={{
+                    marginBottom: '1rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    color: 'var(--text-tertiary)',
+                  }}
+                >
+                  Platform
+                </h4>
+
+                <div className="flex flex-col gap-2">
+                  <a
+                    href="#platform"
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'var(--text-secondary)',
+                    }}
+                    className="hover:text-primary"
+                  >
+                    Platform
+                  </a>
+
+                  <a
+                    href="#capabilities"
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'var(--text-secondary)',
+                    }}
+                    className="hover:text-primary"
+                  >
+                    Features
+                  </a>
+
+                  <a
+                    href="#process"
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'var(--text-secondary)',
+                    }}
+                    className="hover:text-primary"
+                  >
+                    How it works
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <h4
+                  style={{
+                    marginBottom: '1rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    color: 'var(--text-tertiary)',
+                  }}
+                >
+                  Legal
+                </h4>
+
+                <div className="flex flex-col gap-2">
+                  <a
+                    href="#"
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'var(--text-secondary)',
+                    }}
+                    className="hover:text-primary"
+                  >
+                    Privacy
+                  </a>
+
+                  <a
+                    href="#"
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'var(--text-secondary)',
+                    }}
+                    className="hover:text-primary"
+                  >
+                    Terms
+                  </a>
+
+                  <a
+                    href="#"
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'var(--text-secondary)',
+                    }}
+                    className="hover:text-primary"
+                  >
+                    Security
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                borderTop: '1px solid var(--border-light)',
+                marginTop: 'var(--space-8)',
+                paddingTop: 'var(--space-6)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '0.85rem',
+                color: 'var(--text-quaternary)',
+                flexWrap: 'wrap',
+                gap: '1rem',
+              }}
+            >
+              <span>&copy; 2024 VeriRule. All rights reserved.</span>
+              <span>Built with intelligence. Audited for compliance.</span>
+            </div>
+          </footer>
+        </div>
       </div>
     </>
   )
