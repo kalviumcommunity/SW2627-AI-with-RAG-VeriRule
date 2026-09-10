@@ -78,50 +78,49 @@ export default function AnalyticsDashboardPage() {
   }
 
   return (
-    <div className="analytics-dashboard-page" style={{ padding: '2rem', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-            Compliance Analytics Dashboard
-          </h1>
-          <p style={{ color: '#666' }}>
-            Comprehensive compliance metrics and risk assessment
+    <div className="analytics-dashboard-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <div className="enterprise-category-tag">
+            <span>📈 EXECUTIVE ANALYTICS</span>
+          </div>
+          <h1 className="enterprise-header-title">Compliance Analytics Dashboard</h1>
+          <p className="enterprise-header-subtitle">
+            Comprehensive quantitative compliance metrics, risk scorecards, RAG latency benchmarks, and trend forecasts.
           </p>
         </div>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button type="button" onClick={handleGenerateReport} className="enterprise-btn-primary" disabled={generatingReport}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            {generatingReport ? 'Analyzing...' : 'Generate Executive Report'}
+          </button>
+        </div>
+      </div>
 
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* KPI Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '2rem',
-        }}>
+        <div className="enterprise-grid-4" style={{ marginBottom: '2rem' }}>
           {dashboard.kpis.map((kpi, idx) => (
             <div
               key={idx}
+              className="enterprise-stat-card"
               style={{
-                backgroundColor: 'white',
-                borderRadius: '0.5rem',
-                padding: '1.5rem',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                borderLeft: `4px solid ${kpi.status === 'green' ? '#10b981' : kpi.status === 'yellow' ? '#f59e0b' : '#ef4444'}`,
-              }}
+                '--card-accent': kpi.status === 'green' ? 'linear-gradient(90deg, #10B981, #059669)' : kpi.status === 'yellow' ? 'linear-gradient(90deg, #F59E0B, #D97706)' : 'linear-gradient(90deg, #EF4444, #B91C1C)',
+              } as React.CSSProperties}
             >
-              <h3 style={{ fontSize: '0.875rem', color: '#666', marginBottom: '0.5rem' }}>
-                {kpi.metric_name}
-              </h3>
-              <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                {kpi.value.toFixed(1)}{kpi.unit}
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-                <span style={{ color: '#666' }}>Target: {kpi.target}{kpi.unit}</span>
-                <span style={{
-                  color: kpi.status === 'green' ? '#10b981' : kpi.status === 'yellow' ? '#f59e0b' : '#ef4444',
-                  fontWeight: 'bold',
-                }}>
-                  {kpi.status === 'green' ? '✓' : '⚠'} {kpi.status.toUpperCase()}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span className="enterprise-stat-label">{kpi.metric_name}</span>
+                <span className={`enterprise-badge ${kpi.status === 'green' ? 'enterprise-badge-success' : kpi.status === 'yellow' ? 'enterprise-badge-warning' : 'enterprise-badge-danger'}`}>
+                  {kpi.status.toUpperCase()}
                 </span>
+              </div>
+              <div>
+                <div className="enterprise-stat-val">{kpi.value.toFixed(1)}{kpi.unit}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#64748B', marginTop: '0.5rem' }}>
+                  <span>Target: {kpi.target}{kpi.unit}</span>
+                  <span style={{ fontWeight: 600 }}>Trend: {kpi.trend}</span>
+                </div>
               </div>
             </div>
           ))}

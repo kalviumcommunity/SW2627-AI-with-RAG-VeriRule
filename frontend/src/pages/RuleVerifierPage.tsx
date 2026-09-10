@@ -257,57 +257,82 @@ export default function RuleVerifierPage() {
   }
 
   return (
-    <div className="rule-verifier-page">
-      {/* ── Page Header ───────────────────────────────────────────────── */}
-      <div className="dashboard-welcome verifier-heading">
+    <div className="rule-verifier-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <span className="eyebrow">Bank Compliance Risk Engine</span>
-          <h1>Transaction Rule Verifier & Conflict Resolver</h1>
-          <p>
-            Instantly confirm which current Master Direction governs a transaction, isolate active rules from superseded historical guidance, and generate decision proof for audit files.
+          <div className="enterprise-category-tag">
+            <span>🛡️ RULE VERIFIER & CONFLICT RESOLVER</span>
+          </div>
+          <h1 className="enterprise-header-title">Transaction Compliance Verifier</h1>
+          <p className="enterprise-header-subtitle">
+            Instantly confirm which current Master Direction governs a transaction, isolate active rules from superseded historical guidance, and generate cryptographic decision proof.
           </p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button className="enterprise-btn-outline" onClick={() => generateCertificate()}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Generate Decision Proof
+          </button>
         </div>
       </div>
 
       {/* ── Transaction Scenario Selector ───────────────────────────── */}
-      <div className="dashboard-section-card scenario-selector-card">
-        <div className="scenario-header">
-          <h2>Select Transaction Scenario</h2>
-          <span className="scenario-hint">Or choose a pre-configured risk scenario</span>
+      <div className="enterprise-card scenario-selector-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="scenario-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Select Transaction Scenario</h2>
+          <span className="enterprise-badge enterprise-badge-neutral">Pre-configured Risk Scenarios</span>
         </div>
 
-        <div className="scenario-pills-grid">
+        <div className="scenario-pills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
           {PRESET_SCENARIOS.map((scen) => (
             <button
               key={scen.id}
               type="button"
               className={`scenario-pill-btn ${selectedScenario.id === scen.id ? 'active' : ''}`}
               onClick={() => handleSelectScenario(scen)}
+              style={{
+                textAlign: 'left',
+                padding: '1rem',
+                borderRadius: '12px',
+                border: selectedScenario.id === scen.id ? '2px solid #2563EB' : '1px solid #E2E8F0',
+                background: selectedScenario.id === scen.id ? 'rgba(37, 99, 235, 0.04)' : '#FFFFFF',
+                cursor: 'pointer',
+                transition: 'all 150ms ease',
+              }}
             >
-              <span className="pill-cat">{scen.category}</span>
-              <span className="pill-title">{scen.title}</span>
+              <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#2563EB', marginBottom: '0.25rem' }}>{scen.category}</span>
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F172A' }}>{scen.title}</span>
             </button>
           ))}
         </div>
 
-        <div className="verifier-search-row" style={{ marginTop: '1rem' }}>
+        <div className="verifier-search-row" style={{ display: 'flex', gap: '0.75rem' }}>
           <input
             type="text"
             className="verifier-search-input"
+            style={{
+              flex: 1,
+              padding: '0.75rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid #CBD5E1',
+              fontSize: '0.9rem',
+              outline: 'none',
+            }}
             placeholder="Type custom transaction details (e.g. International wire transfer of $250,000)..."
             value={customSearch}
             onChange={(e) => setCustomSearch(e.target.value)}
           />
           <button
             type="button"
-            className="btn btn-primary"
+            className="enterprise-btn-primary"
             onClick={handleCustomVerify}
             disabled={!customSearch.trim()}
           >
             Verify Transaction Rule →
           </button>
         </div>
-        {customSearchError && <p className="verifier-search-error" role="alert">{customSearchError}</p>}
+        {customSearchError && <p className="verifier-search-error" style={{ color: '#EF4444', fontSize: '0.85rem', marginTop: '0.5rem' }} role="alert">{customSearchError}</p>}
       </div>
 
       {/* ── CORE CONFLICT RESOLUTION DUAL CARDS ─────────────────────── */}

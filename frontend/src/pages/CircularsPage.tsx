@@ -140,7 +140,7 @@ export default function CircularsPage() {
   const supersededCount = circularList.filter((c) => c.status === 'Superseded').length
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div className="panel-card premium-page-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
       {/* Toast */}
       {toastMessage && (
@@ -154,45 +154,73 @@ export default function CircularsPage() {
         </div>
       )}
 
-      {/* ── Page Header ──────────────────────────────────────────────── */}
-      <div className="dashboard-welcome">
-        <h1>Circulars & Rules</h1>
-        <p>Browse indexed regulatory circulars, inspect rule hierarchies, and track supersession links.</p>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <div className="enterprise-category-tag">
+            <span>📜 REGULATORY REPOSITORY</span>
+          </div>
+          <h1 className="enterprise-header-title">Circulars & Master Directions</h1>
+          <p className="enterprise-header-subtitle">
+            Browse indexed regulatory circulars, inspect rule hierarchies, and track supersession chains.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button className="enterprise-btn-primary" onClick={() => setShowUploadModal(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Upload Circular
+          </button>
+        </div>
       </div>
 
-      {/* ── Stats Strip ──────────────────────────────────────────────── */}
-      <div className="metrics-grid">
-        <div className="metric-card">
-          <div className="metric-header">
-            <span className="metric-title">Total Indexed</span>
-            <div className="metric-icon-wrap">📜</div>
+      {/* ── Enterprise Stat Cards ────────────────────────────────────────────── */}
+      <div className="enterprise-grid-4" style={{ marginBottom: '1.5rem' }}>
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #4D85FF, #2563EB)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">Total Circulars</span>
+            <div className="enterprise-icon-box">📜</div>
           </div>
-          <div className="metric-value">{circularList.length}</div>
-          <div className="metric-sub">In RAG vector store</div>
+          <div className="enterprise-stat-val">{circularList.length}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>In RAG vector store</span>
+            <span className="enterprise-badge enterprise-badge-info">Active</span>
+          </div>
         </div>
-        <div className="metric-card">
-          <div className="metric-header">
-            <span className="metric-title">Active</span>
-            <div className="metric-icon-wrap">✓</div>
+
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #10B981, #059669)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">Active Rules</span>
+            <div className="enterprise-icon-box">✓</div>
           </div>
-          <div className="metric-value">{activeCount}</div>
-          <div className="metric-sub">Currently enforced</div>
+          <div className="enterprise-stat-val">{activeCount}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>Currently enforced</span>
+            <span className="enterprise-badge enterprise-badge-success">Compliant</span>
+          </div>
         </div>
-        <div className="metric-card">
-          <div className="metric-header">
-            <span className="metric-title">Superseded</span>
-            <div className="metric-icon-wrap">⚡</div>
+
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #F59E0B, #D97706)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">Superseded</span>
+            <div className="enterprise-icon-box">⚡</div>
           </div>
-          <div className="metric-value">{supersededCount}</div>
-          <div className="metric-sub" style={{ color: '#b45309' }}>Replaced by newer rules</div>
+          <div className="enterprise-stat-val">{supersededCount}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>Historical versions</span>
+            <span className="enterprise-badge enterprise-badge-warning">Archived</span>
+          </div>
         </div>
-        <div className="metric-card">
-          <div className="metric-header">
-            <span className="metric-title">Citations</span>
-            <div className="metric-icon-wrap">🔍</div>
+
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #8B5CF6, #7C3AED)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">Total Citations</span>
+            <div className="enterprise-icon-box">🔍</div>
           </div>
-          <div className="metric-value">{circularList.reduce((a, c) => a + c.citations, 0).toLocaleString()}</div>
-          <div className="metric-sub">Source-verified</div>
+          <div className="enterprise-stat-val">{circularList.reduce((a, c) => a + c.citations, 0).toLocaleString()}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>Source-verified</span>
+            <span className="enterprise-badge enterprise-badge-violet">ChromaDB</span>
+          </div>
         </div>
       </div>
 
@@ -243,7 +271,7 @@ export default function CircularsPage() {
       {viewMode === 'table' && (
         <div className="dashboard-section-card" style={{ marginBottom: 0 }}>
           <div className="circulars-table-wrapper">
-            <table className="circulars-table">
+            <table className="enterprise-table">
               <thead>
                 <tr>
                   <th>Circular ID</th>
@@ -301,7 +329,7 @@ export default function CircularsPage() {
       {viewMode === 'cards' && (
         <div className="citations-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
           {filtered.map((c) => (
-            <div key={c.id} className="citation-card" style={{ padding: '1.25rem' }}>
+            <div key={c.id} className="panel-card premium-citation-card" style={{ padding: '1.25rem' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                   <span style={{ fontWeight: 700, fontFamily: 'monospace', color: '#4f46e5', fontSize: '0.85rem' }}>{c.id}</span>

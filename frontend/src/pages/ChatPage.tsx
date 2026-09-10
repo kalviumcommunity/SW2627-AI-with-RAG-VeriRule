@@ -749,10 +749,10 @@ export default function ChatPage() {
           </button>
 
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.3rem' }}>
-              VeriRule intelligence
+            <div className="enterprise-category-tag" style={{ marginBottom: '0.25rem' }}>
+              <span>💬 REAL-TIME AI CONVERSATION</span>
             </div>
-            <h1 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0' }}>Compliance Chat Assistant</h1>
+            <h1 className="enterprise-header-title" style={{ fontSize: '1.4rem' }}>Compliance Chat Assistant</h1>
           </div>
 
           <div style={{
@@ -760,21 +760,9 @@ export default function ChatPage() {
             alignItems: 'center',
             gap: '1rem',
           }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              color: '#4B5563',
-            }}>
-              <span style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#10B981',
-              }} />
-              Knowledge base online
+            <div className="enterprise-badge enterprise-badge-success" style={{ padding: '0.4rem 0.8rem', fontSize: '0.82rem' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
+              ChromaDB Vector Store Connected
             </div>
 
             {activeSession.messages.length > 0 && (

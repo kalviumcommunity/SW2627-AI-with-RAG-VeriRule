@@ -129,6 +129,9 @@ export default function DashboardLayout() {
   const path = location.pathname
   const { user, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
 
   const avatarInitial = user.name ? user.name.trim().charAt(0).toUpperCase() : 'U'
 
@@ -140,6 +143,52 @@ export default function DashboardLayout() {
   useEffect(() => {
     setSidebarOpen(false)
   }, [path])
+
+  // Global Ctrl+K / Cmd+K listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        setSearchOpen((prev) => !prev)
+      } else if (e.key === 'Escape') {
+        setSearchOpen(false)
+        setNotificationsOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  const ALL_PAGES = [
+    { label: 'Overview Dashboard', path: '/dashboard', cat: 'Main', desc: 'Real-time compliance exposure & risk heatmap' },
+    { label: 'Circulars & Master Directions', path: '/dashboard/circulars', cat: 'Main', desc: 'Indexed regulatory circulars & rule hierarchies' },
+    { label: 'Rule Verifier & Conflict Resolver', path: '/dashboard/rule-verifier', cat: 'Governance', desc: 'Test transaction against active vs superseded rules' },
+    { label: 'Regulatory Diff Engine', path: '/dashboard/diff-engine', cat: 'Governance', desc: 'Compare directive versions and department impact' },
+    { label: 'Remediation & CAPA Workflow', path: '/dashboard/remediation', cat: 'Governance', desc: 'Assign corrective actions, track SLAs & sign-offs' },
+    { label: 'Rule Supersession Timeline', path: '/dashboard/rule-timeline', cat: 'Governance', desc: 'Chronological timeline of regulatory evolution' },
+    { label: 'Impact Analyzer & Gap Matrix', path: '/dashboard/impact-analyzer', cat: 'Governance', desc: 'Evaluate IT system impact & operational gaps' },
+    { label: 'Compliance Simulator', path: '/dashboard/simulator', cat: 'Governance', desc: 'Interactive scenario testing & risk evaluation' },
+    { label: 'Executive Compliance Reports', path: '/dashboard/reports', cat: 'Governance', desc: 'Generate formal audit packages & SHA-256 proofs' },
+    { label: 'Audit Trail', path: '/dashboard/audit-trail', cat: 'Governance', desc: 'Verifiable audit log of queries & verifications' },
+    { label: 'AI Query Engine', path: '/dashboard/query-engine', cat: 'Intelligence', desc: 'Natural language search with ChromaDB evidence' },
+    { label: 'Compliance Chat Assistant', path: '/dashboard/chat', cat: 'Intelligence', desc: 'Real-time interactive AI compliance assistant' },
+    { label: 'Document Repository', path: '/dashboard/documents', cat: 'Repository', desc: 'Ingest & manage PDF/text files in vector store' },
+    { label: 'Analytics Dashboard', path: '/dashboard/analytics', cat: 'Analytics', desc: 'Quantitative metrics & compliance scorecards' },
+    { label: 'Platform Settings', path: '/dashboard/settings', cat: 'Account', desc: 'User profile & confidence threshold preferences' },
+  ]
+
+  const filteredSearchPages = ALL_PAGES.filter(
+    (p) =>
+      p.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.cat.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const sampleNotifications = [
+    { id: '1', title: 'RBI Master Direction Updated', time: '10m ago', type: 'info', text: 'Master Direction RBI/2023-24/108 indexed into ChromaDB.' },
+    { id: '2', title: 'CAPA SLA Warning', time: '1h ago', type: 'warning', text: 'CAPA-2026-001 (MFA Enforcement) due in 5 days.' },
+    { id: '3', title: 'Audit Report Generated', time: '3h ago', type: 'success', text: 'Executive Compliance Summary package exported successfully.' },
+  ]
 
   return (
     <div style={{
@@ -199,44 +248,47 @@ export default function DashboardLayout() {
               height: '32px',
               background: 'linear-gradient(135deg, #4D85FF, #14B8A6)',
               borderRadius: '8px',
-            }} />
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+            }}>
+              VR
+            </div>
             <span>VeriRule</span>
           </Link>
         </div>
 
-        {/* Search Bar */}
-        <div style={{
-          flex: 1,
-          maxWidth: '500px',
-          display: 'flex',
-          alignItems: 'center',
-          background: '#F3F4F6',
-          border: '1.5px solid #E5E7EB',
-          borderRadius: '12px',
-          padding: '0.75rem 1rem',
-          gap: '0.5rem',
-        }}>
+        {/* Global Search Bar (Triggers Command Palette) */}
+        <div
+          onClick={() => setSearchOpen(true)}
+          style={{
+            flex: 1,
+            maxWidth: '500px',
+            display: 'flex',
+            alignItems: 'center',
+            background: '#F3F4F6',
+            border: '1.5px solid #E5E7EB',
+            borderRadius: '12px',
+            padding: '0.6rem 1rem',
+            gap: '0.5rem',
+            cursor: 'pointer',
+            transition: 'all 150ms ease',
+          }}
+        >
           <span style={{ color: '#6B7280', width: '18px', height: '18px', display: 'flex', flexShrink: 0 }}>
             {icons.search}
           </span>
-          <input
-            type="search"
-            style={{
-              flex: 1,
-              border: 'none',
-              background: 'none',
-              outline: 'none',
-              fontSize: '0.9rem',
-              color: '#111827',
-            }}
-            placeholder="Search regulations…"
-            aria-label="Global search"
-          />
+          <span style={{ flex: 1, fontSize: '0.9rem', color: '#6B7280' }}>
+            Search regulations, circulars, tools…
+          </span>
           <kbd style={{
             fontSize: '0.7rem',
             background: '#E5E7EB',
             color: '#4B5563',
-            padding: '0.3rem 0.6rem',
+            padding: '0.2rem 0.5rem',
             borderRadius: '4px',
             fontWeight: 600,
           }}>
@@ -244,21 +296,23 @@ export default function DashboardLayout() {
           </kbd>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
           {/* Notification Bell */}
           <button
             type="button"
+            onClick={() => setNotificationsOpen((prev) => !prev)}
             style={{
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               color: '#4B5563',
-              width: '24px',
-              height: '24px',
+              width: '32px',
+              height: '32px',
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               position: 'relative',
-              padding: '0.5rem',
+              borderRadius: '8px',
             }}
             aria-label="Notifications"
           >
@@ -269,10 +323,42 @@ export default function DashboardLayout() {
               height: '8px',
               background: '#10B981',
               borderRadius: '50%',
-              top: '4px',
-              right: '2px',
+              top: '6px',
+              right: '6px',
             }} />
           </button>
+
+          {/* Notifications Dropdown Panel */}
+          {notificationsOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '48px',
+              right: '120px',
+              width: '340px',
+              background: '#FFFFFF',
+              border: '1px solid #E2E8F0',
+              borderRadius: '16px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+              zIndex: 300,
+              padding: '1rem',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>Notifications</h4>
+                <span className="enterprise-badge enterprise-badge-info">3 New</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                {sampleNotifications.map((n) => (
+                  <div key={n.id} style={{ padding: '0.65rem', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #F1F5F9' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 700, color: '#0F172A' }}>
+                      <span>{n.title}</span>
+                      <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>{n.time}</span>
+                    </div>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#64748B' }}>{n.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* User Badge */}
           <div style={{
@@ -490,6 +576,95 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* ── Command Palette Modal (Ctrl+K) ───────────────────────── */}
+      {searchOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15, 23, 42, 0.6)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 999,
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          paddingTop: '8vh',
+        }}
+          onClick={() => setSearchOpen(false)}
+        >
+          <div style={{
+            width: '100%',
+            maxWidth: '620px',
+            background: '#FFFFFF',
+            borderRadius: '20px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid #E2E8F0',
+            overflow: 'hidden',
+          }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', padding: '1rem 1.25rem', borderBottom: '1px solid #E2E8F0', gap: '0.75rem' }}>
+              <span style={{ color: '#2563EB', width: 20, height: 20 }}>{icons.search}</span>
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search regulations, circulars, tools or pages..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  outline: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 500,
+                  color: '#0F172A',
+                }}
+              />
+              <span style={{ fontSize: '0.75rem', color: '#94A3B8', padding: '0.2rem 0.5rem', background: '#F1F5F9', borderRadius: 6 }}>ESC to close</span>
+            </div>
+
+            <div style={{ maxHeight: '420px', overflowY: 'auto', padding: '0.75rem' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', padding: '0.5rem 0.75rem' }}>
+                Navigation & Tools ({filteredSearchPages.length})
+              </div>
+              {filteredSearchPages.length === 0 ? (
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#64748B', fontSize: '0.9rem' }}>
+                  No matching regulatory sections found for "{searchQuery}".
+                </div>
+              ) : (
+                filteredSearchPages.map((p) => (
+                  <div
+                    key={p.path}
+                    onClick={() => {
+                      navigate(p.path)
+                      setSearchOpen(false)
+                      setSearchQuery('')
+                    }}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      transition: 'background 150ms ease',
+                      marginBottom: '0.25rem',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = '#F8FAFC' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#0F172A' }}>{p.label}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748B' }}>{p.desc}</div>
+                    </div>
+                    <span className="enterprise-badge enterprise-badge-neutral">{p.cat}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

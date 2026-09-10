@@ -146,33 +146,31 @@ export default function AuditTrailPage() {
   }
 
   return (
-    <div className="audit-trail-page">
-      {/* ── Page Header ───────────────────────────────────────────────── */}
-      <div className="audit-header-panel">
+    <div className="audit-trail-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <span className="eyebrow">Governance & Compliance Intelligence</span>
-          <h1>Compliance Audit Trail</h1>
-          <p>
-            Cryptographically verifiable audit log tracking query executions, evidence verifications, and regulatory supersessions.
+          <div className="enterprise-category-tag">
+            <span>📜 GOVERNANCE AUDIT TRAIL</span>
+          </div>
+          <h1 className="enterprise-header-title">Compliance Audit Trail</h1>
+          <p className="enterprise-header-subtitle">
+            Cryptographically verifiable audit log tracking AI query executions, evidence verifications, and regulatory supersession events.
           </p>
         </div>
-
-        <div className="audit-actions">
-          <button type="button" onClick={() => loadData()} className="btn btn-ghost btn-sm" title="Refresh Audit Trail">
-            <span>🔄</span> Refresh
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button type="button" onClick={() => loadData()} className="enterprise-btn-secondary" title="Refresh Audit Trail">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Refresh
           </button>
-          <button type="button" onClick={() => setShowModal(true)} className="btn btn-secondary btn-sm">
-            <span>+</span> Log Audit Event
+          <button type="button" onClick={() => setShowModal(true)} className="enterprise-btn-outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Log Audit Event
           </button>
-
-          <div className="dropdown-export">
-            <button type="button" onClick={() => exportReport('json')} className="btn btn-primary btn-sm">
-              <span>📥</span> Export Report (JSON)
-            </button>
-            <button type="button" onClick={() => exportReport('csv')} className="btn btn-ghost btn-sm">
-              CSV
-            </button>
-          </div>
+          <button type="button" onClick={() => exportReport('json')} className="enterprise-btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+          </button>
         </div>
       </div>
 

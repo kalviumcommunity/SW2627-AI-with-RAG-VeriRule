@@ -119,25 +119,24 @@ export default function DocumentsPage() {
   })
 
   return (
-    <div className="documents-page">
-      {/* ── Page Header ───────────────────────────────────────────────── */}
-      <div className="dashboard-welcome docs-heading">
+    <div className="documents-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <span className="eyebrow">Knowledge Base Architecture</span>
-          <h1>Document Repository & Ingestion Pipeline</h1>
-          <p>
-            Ingest master directions, regulatory circulars, internal audit reports, and policy updates into Chroma DB vector store for grounded compliance queries.
+          <div className="enterprise-category-tag">
+            <span>📁 VECTOR KNOWLEDGE REPOSITORY</span>
+          </div>
+          <h1 className="enterprise-header-title">Document Repository & Ingestion Pipeline</h1>
+          <p className="enterprise-header-subtitle">
+            Ingest master directions, regulatory circulars, internal audit reports, and policy updates into Chroma DB vector store.
           </p>
         </div>
-
-        <div className="doc-header-stats">
-          <div className="header-stat-chip">
-            <span>Indexed Documents</span>
-            <strong>{documents.length}</strong>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="enterprise-badge enterprise-badge-info" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+            <span>Indexed Documents: <strong>{documents.length}</strong></span>
           </div>
-          <div className="header-stat-chip">
-            <span>Vector Chunks</span>
-            <strong>{documents.reduce((acc, d) => acc + d.chunk_count, 0)}</strong>
+          <div className="enterprise-badge enterprise-badge-violet" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+            <span>Vector Chunks: <strong>{documents.reduce((acc, d) => acc + d.chunk_count, 0)}</strong></span>
           </div>
         </div>
       </div>
