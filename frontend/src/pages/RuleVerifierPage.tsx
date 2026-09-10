@@ -257,12 +257,12 @@ export default function RuleVerifierPage() {
   }
 
   return (
-    <div className="rule-verifier-page" style={{ padding: '0 0 2rem 0' }}>
+    <div style={{ padding: '1.75rem 2rem', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
       {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
       <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div className="enterprise-category-tag">
-            <span>🛡️ RULE VERIFIER & CONFLICT RESOLVER</span>
+            <span>🛡️ RULE VERIFIER &amp; CONFLICT RESOLVER</span>
           </div>
           <h1 className="enterprise-header-title">Transaction Compliance Verifier</h1>
           <p className="enterprise-header-subtitle">
@@ -270,7 +270,7 @@ export default function RuleVerifierPage() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button className="enterprise-btn-outline" onClick={() => generateCertificate()}>
+          <button className="enterprise-btn-primary" onClick={() => generateCertificate()}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Generate Decision Proof
           </button>
@@ -278,158 +278,160 @@ export default function RuleVerifierPage() {
       </div>
 
       {/* ── Transaction Scenario Selector ───────────────────────────── */}
-      <div className="enterprise-card scenario-selector-card" style={{ marginBottom: '1.5rem' }}>
-        <div className="scenario-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Select Transaction Scenario</h2>
-          <span className="enterprise-badge enterprise-badge-neutral">Pre-configured Risk Scenarios</span>
+      <div className="panel-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="panel-card-header">
+          <div>
+            <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0F172A' }}>Select Transaction Scenario</h2>
+            <p style={{ margin: '0.2rem 0 0', fontSize: '0.82rem', color: '#64748B' }}>Pre-configured risk scenarios mapped to live RBI / SEBI directives</p>
+          </div>
+          <span className="enterprise-badge enterprise-badge-info">Pre-configured Risk Scenarios</span>
         </div>
+        <div className="panel-card-body">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
+            {PRESET_SCENARIOS.map((scen) => (
+              <button
+                key={scen.id}
+                type="button"
+                onClick={() => handleSelectScenario(scen)}
+                style={{
+                  textAlign: 'left',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '14px',
+                  border: selectedScenario.id === scen.id ? '2px solid #2563EB' : '1.5px solid #E2E8F0',
+                  background: selectedScenario.id === scen.id
+                    ? 'linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(77,133,255,0.03) 100%)'
+                    : '#FAFBFC',
+                  cursor: 'pointer',
+                  transition: 'all 180ms ease',
+                  boxShadow: selectedScenario.id === scen.id ? '0 0 0 3px rgba(37,99,235,0.12)' : 'none',
+                }}
+              >
+                <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563EB', marginBottom: '0.35rem' }}>{scen.category}</span>
+                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F172A', lineHeight: 1.35 }}>{scen.title}</span>
+              </button>
+            ))}
+          </div>
 
-        <div className="scenario-pills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          {PRESET_SCENARIOS.map((scen) => (
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <input
+              type="text"
+              className="enterprise-input"
+              style={{ flex: 1, fontSize: '0.9rem' }}
+              placeholder="Type custom transaction details (e.g. International wire transfer of $250,000)..."
+              value={customSearch}
+              onChange={(e) => setCustomSearch(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleCustomVerify()}
+            />
             <button
-              key={scen.id}
               type="button"
-              className={`scenario-pill-btn ${selectedScenario.id === scen.id ? 'active' : ''}`}
-              onClick={() => handleSelectScenario(scen)}
-              style={{
-                textAlign: 'left',
-                padding: '1rem',
-                borderRadius: '12px',
-                border: selectedScenario.id === scen.id ? '2px solid #2563EB' : '1px solid #E2E8F0',
-                background: selectedScenario.id === scen.id ? 'rgba(37, 99, 235, 0.04)' : '#FFFFFF',
-                cursor: 'pointer',
-                transition: 'all 150ms ease',
-              }}
+              className="enterprise-btn-primary"
+              onClick={handleCustomVerify}
+              disabled={!customSearch.trim()}
             >
-              <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#2563EB', marginBottom: '0.25rem' }}>{scen.category}</span>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F172A' }}>{scen.title}</span>
+              Verify Transaction Rule →
             </button>
-          ))}
+          </div>
+          {customSearchError && <p style={{ color: '#EF4444', fontSize: '0.85rem', marginTop: '0.5rem' }} role="alert">{customSearchError}</p>}
         </div>
-
-        <div className="verifier-search-row" style={{ display: 'flex', gap: '0.75rem' }}>
-          <input
-            type="text"
-            className="verifier-search-input"
-            style={{
-              flex: 1,
-              padding: '0.75rem 1rem',
-              borderRadius: '10px',
-              border: '1px solid #CBD5E1',
-              fontSize: '0.9rem',
-              outline: 'none',
-            }}
-            placeholder="Type custom transaction details (e.g. International wire transfer of $250,000)..."
-            value={customSearch}
-            onChange={(e) => setCustomSearch(e.target.value)}
-          />
-          <button
-            type="button"
-            className="enterprise-btn-primary"
-            onClick={handleCustomVerify}
-            disabled={!customSearch.trim()}
-          >
-            Verify Transaction Rule →
-          </button>
-        </div>
-        {customSearchError && <p className="verifier-search-error" style={{ color: '#EF4444', fontSize: '0.85rem', marginTop: '0.5rem' }} role="alert">{customSearchError}</p>}
       </div>
 
       {/* ── CORE CONFLICT RESOLUTION DUAL CARDS ─────────────────────── */}
-      <div className="rule-cards-grid">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
         {/* CARD 1: ACTIVE GOVERNING RULE */}
-        <div className="dashboard-section-card rule-card active-rule-card">
-          <div className="rule-card-topline">
-            <span className="badge-status badge-active">✓ CURRENT ACTIVE RULE</span>
-            <span className="authority-tag-lg">{selectedScenario.activeRule.authority}</span>
-          </div>
-
-          <h2 className="rule-card-title">{selectedScenario.activeRule.title}</h2>
-
-          <div className="rule-meta-bar">
-            <span>Doc ID: <strong>{selectedScenario.activeRule.documentId}</strong></span>
-            <span>Effective: <strong>{selectedScenario.activeRule.effectiveDate}</strong></span>
-            <span>Section: <strong>{selectedScenario.activeRule.section}</strong></span>
-          </div>
-
-          <div className="passage-callout active-passage-callout">
-            <span className="callout-label">Official Active Clause:</span>
-            <p>“{selectedScenario.activeRule.passage}”</p>
-          </div>
-
-          {/* Compliance Safeguards Checklist */}
-          <div className="checklist-section">
-            <h4>Mandatory Risk Officer Checklist</h4>
-            <div className="checklist-items">
-              {selectedScenario.activeRule.keyRequirements.map((req) => (
-                <label key={req} className="checklist-item">
-                  <input
-                    type="checkbox"
-                    checked={!!checkedRequirements[req]}
-                    onChange={() => toggleCheck(req)}
-                  />
-                  <span>{req}</span>
-                </label>
-              ))}
+        <div className="panel-card">
+          <div className="panel-card-header">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <span className="enterprise-badge enterprise-badge-success">✓ CURRENT ACTIVE RULE</span>
+              <span className="enterprise-badge enterprise-badge-info" style={{ fontSize: '0.72rem' }}>{selectedScenario.activeRule.authority}</span>
             </div>
           </div>
+          <div className="panel-card-body">
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', margin: '0 0 0.75rem', lineHeight: 1.3 }}>{selectedScenario.activeRule.title}</h2>
 
-          <div className="verifier-card-action">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem', fontSize: '0.84rem', color: '#64748B' }}>
+              <span>Doc ID: <strong style={{ color: '#0F172A' }}>{selectedScenario.activeRule.documentId}</strong></span>
+              <span>Effective: <strong style={{ color: '#0F172A' }}>{selectedScenario.activeRule.effectiveDate}</strong></span>
+              <span>Section: <strong style={{ color: '#0F172A' }}>{selectedScenario.activeRule.section}</strong></span>
+            </div>
+
+            <div className="enterprise-callout-active" style={{ marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#047857', marginBottom: '0.4rem' }}>Official Active Clause</div>
+              <p style={{ fontSize: '0.9rem', color: '#065F46', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>"{selectedScenario.activeRule.passage}"</p>
+            </div>
+
+            {/* Compliance Safeguards Checklist */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.04em', margin: '0 0 0.75rem' }}>Mandatory Risk Officer Checklist</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {selectedScenario.activeRule.keyRequirements.map((req) => (
+                  <label key={req} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 0.875rem', background: checkedRequirements[req] ? 'rgba(16,185,129,0.06)' : '#F8FAFC', border: `1.5px solid ${checkedRequirements[req] ? '#A7F3D0' : '#E2E8F0'}`, borderRadius: '10px', cursor: 'pointer', transition: 'all 150ms ease', fontSize: '0.875rem', fontWeight: 500, color: '#1E293B' }}>
+                    <input
+                      type="checkbox"
+                      checked={!!checkedRequirements[req]}
+                      onChange={() => toggleCheck(req)}
+                      style={{ width: 16, height: 16, accentColor: '#10B981', cursor: 'pointer' }}
+                    />
+                    <span>{req}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <button
               type="button"
-              className="btn btn-primary btn-full"
+              className="enterprise-btn-primary"
               onClick={generateCertificate}
               disabled={isVerifying || !allChecked}
+              style={{ width: '100%', justifyContent: 'center', padding: '0.75rem 1.25rem', opacity: (!allChecked || isVerifying) ? 0.55 : 1, cursor: (!allChecked || isVerifying) ? 'not-allowed' : 'pointer' }}
             >
-              {isVerifying
-                ? 'Generating Verification Signature...'
-                : 'Generate Decision Proof Certificate →'}
+              {isVerifying ? 'Generating Verification Signature...' : 'Generate Decision Proof Certificate →'}
             </button>
-            <small style={{ color: 'var(--text-muted)', fontSize: '0.76rem', display: 'block', textAlign: 'center', marginTop: '0.35rem' }}>
-              {allChecked
-                ? 'All mandatory safeguards verified. Issues cryptographically signed decision audit log entry.'
-                : 'Issues cryptographically signed decision audit log entry for internal bank auditors.'}
-            </small>
+            <p style={{ textAlign: 'center', fontSize: '0.76rem', color: '#94A3B8', marginTop: '0.5rem', margin: '0.5rem 0 0' }}>
+              {allChecked ? 'All safeguards verified — issues cryptographically signed audit entry.' : 'Check all items above to generate a signed compliance proof.'}
+            </p>
           </div>
         </div>
 
         {/* CARD 2: SUPERSEDED HISTORICAL GUIDANCE WARNING */}
-        <div className="dashboard-section-card rule-card superseded-rule-card">
+        <div className="panel-card">
           {selectedScenario.supersededRule ? (
             <>
-              <div className="rule-card-topline">
-                <span className="badge-status badge-superseded">⚡ SUPERSEDED GUIDANCE</span>
-                <span className="warning-chip">DO NOT APPLY</span>
+              <div className="panel-card-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span className="enterprise-badge enterprise-badge-danger">⚡ SUPERSEDED GUIDANCE</span>
+                  <span className="enterprise-badge enterprise-badge-warning" style={{ fontSize: '0.72rem' }}>DO NOT APPLY</span>
+                </div>
               </div>
+              <div className="panel-card-body">
+                <h2 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#991B1B', margin: '0 0 0.75rem', lineHeight: 1.3 }}>
+                  {selectedScenario.supersededRule.title}
+                </h2>
 
-              <h2 className="rule-card-title" style={{ color: '#991b1b' }}>
-                {selectedScenario.supersededRule.title}
-              </h2>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem', fontSize: '0.84rem', color: '#64748B' }}>
+                  <span>Doc ID: <strong style={{ color: '#991B1B' }}>{selectedScenario.supersededRule.documentId}</strong></span>
+                  <span>Superseded: <strong style={{ color: '#0F172A' }}>{selectedScenario.supersededRule.supersededDate}</strong></span>
+                </div>
 
-              <div className="rule-meta-bar">
-                <span>Doc ID: <strong style={{ color: '#991b1b' }}>{selectedScenario.supersededRule.documentId}</strong></span>
-                <span>Superseded: <strong>{selectedScenario.supersededRule.supersededDate}</strong></span>
-              </div>
+                <div className="enterprise-callout-warning" style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#991B1B', marginBottom: '0.4rem' }}>Obsolete Historical Text</div>
+                  <p style={{ fontSize: '0.9rem', color: '#7F1D1D', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>"{selectedScenario.supersededRule.passage}"</p>
+                </div>
 
-              <div className="passage-callout superseded-passage-callout">
-                <span className="callout-label" style={{ color: '#991b1b' }}>Obsolete Historical Text:</span>
-                <p>“{selectedScenario.supersededRule.passage}”</p>
-              </div>
-
-              <div className="conflict-resolution-box">
-                <h4>Conflict Resolution Proof</h4>
-                <p>{selectedScenario.supersededRule.reason}</p>
-                <div className="supersession-link-tag">
-                  <span>Superseded by active directive:</span>
-                  <strong>{selectedScenario.supersededRule.supersededBy}</strong>
+                <div style={{ background: '#FFF7ED', border: '1px solid #FDE68A', borderLeft: '4px solid #F59E0B', borderRadius: '12px', padding: '1rem 1.25rem' }}>
+                  <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: '#92400E', textTransform: 'uppercase', letterSpacing: '0.04em', margin: '0 0 0.5rem' }}>Conflict Resolution Proof</h4>
+                  <p style={{ fontSize: '0.88rem', color: '#78350F', margin: '0 0 0.75rem', lineHeight: 1.6 }}>{selectedScenario.supersededRule.reason}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.78rem', color: '#92400E' }}>Superseded by active directive:</span>
+                    <span className="enterprise-badge enterprise-badge-info">{selectedScenario.supersededRule.supersededBy}</span>
+                  </div>
                 </div>
               </div>
             </>
           ) : (
-            <div className="no-conflict-state">
-              <div className="no-conflict-icon">✓</div>
-              <h3>No Historical Conflict Detected</h3>
-              <p>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '3rem 2rem', gap: '0.75rem' }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', border: '2px solid #A7F3D0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '0.5rem' }}>✓</div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#065F46', margin: 0 }}>No Historical Conflict Detected</h3>
+              <p style={{ fontSize: '0.88rem', color: '#64748B', maxWidth: 340, lineHeight: 1.65, margin: 0 }}>
                 The active directive ({selectedScenario.activeRule.documentId}) is standalone and has no superseded historical precedents for this transaction type.
               </p>
             </div>
@@ -439,19 +441,20 @@ export default function RuleVerifierPage() {
 
       {/* ── INTERNAL AUDIT REPORT CROSS-REFERENCE ────────────────────── */}
       {selectedScenario.internalAuditLink && (
-        <div className="dashboard-section-card internal-audit-card">
-          <div className="audit-card-header">
+        <div className="panel-card" style={{ marginBottom: '1.5rem' }}>
+          <div className="panel-card-header">
             <div>
-              <span className="eyebrow">Internal Bank Governance Link</span>
-              <h2>{selectedScenario.internalAuditLink.title}</h2>
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#B45309', marginBottom: '0.2rem' }}>Internal Bank Governance Link</div>
+              <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>{selectedScenario.internalAuditLink.title}</h2>
             </div>
-            <span className="doc-tag" style={{ background: '#fef3c7', color: '#b45309' }}>
-              {selectedScenario.internalAuditLink.reportId}
-            </span>
+            <span className="enterprise-badge enterprise-badge-warning">{selectedScenario.internalAuditLink.reportId}</span>
           </div>
-          <p className="audit-finding-text">
-            <strong>Internal Audit Finding:</strong> “{selectedScenario.internalAuditLink.finding}”
-          </p>
+          <div className="panel-card-body">
+            <div className="enterprise-callout-info">
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#1D4ED8', marginBottom: '0.4rem' }}>Internal Audit Finding</div>
+              <p style={{ fontSize: '0.9rem', color: '#1E3A8A', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>"{selectedScenario.internalAuditLink.finding}"</p>
+            </div>
+          </div>
         </div>
       )}
 
