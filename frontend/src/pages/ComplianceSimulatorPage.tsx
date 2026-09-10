@@ -197,15 +197,23 @@ export default function ComplianceSimulatorPage() {
   }
 
   return (
-    <div className="compliance-simulator-page">
-      {/* ── Page Header ─────────────────────────────────────────────── */}
-      <div className="dashboard-welcome">
+    <div className="compliance-simulator-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <span className="eyebrow">Real-Time Evaluation Sandbox</span>
-          <h1>Regulatory Compliance Transaction Simulator</h1>
-          <p>
+          <div className="enterprise-category-tag">
+            <span>🧪 EVALUATION SANDBOX</span>
+          </div>
+          <h1 className="enterprise-header-title">Compliance Transaction Simulator</h1>
+          <p className="enterprise-header-subtitle">
             Configure custom transaction parameters and run a real-time multi-directive evaluation engine to test compliance pass/fail criteria before production execution.
           </p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button type="button" onClick={runSimulation} className="enterprise-btn-primary" disabled={isSimulating}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            {isSimulating ? 'Evaluating...' : 'Run Live Simulation'}
+          </button>
         </div>
       </div>
 

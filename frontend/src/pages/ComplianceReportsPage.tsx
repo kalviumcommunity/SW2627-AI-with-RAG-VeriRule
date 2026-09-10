@@ -201,15 +201,23 @@ export default function ComplianceReportsPage() {
   }
 
   return (
-    <div className="compliance-reports-page">
-      {/* ── Page Header ─────────────────────────────────────────────── */}
-      <div className="dashboard-welcome">
+    <div className="compliance-reports-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <span className="eyebrow">Executive Compliance Reporting</span>
-          <h1>Regulatory Compliance Reporting Center</h1>
-          <p>
-            Generate, inspect, and export formal compliance readiness reports, superseded circular exposure analyses, and audit proof packages for senior management and regulatory inspectors.
+          <div className="enterprise-category-tag">
+            <span>📊 EXECUTIVE REPORTING CENTER</span>
+          </div>
+          <h1 className="enterprise-header-title">Compliance Reports & Audit Packages</h1>
+          <p className="enterprise-header-subtitle">
+            Generate, inspect, and export formal compliance readiness reports, superseded circular exposure analyses, and audit proof packages.
           </p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button type="button" onClick={handleGenerateReport} className="enterprise-btn-primary" disabled={isExporting}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            {isExporting ? 'Generating...' : 'Generate Compliance Package'}
+          </button>
         </div>
       </div>
 

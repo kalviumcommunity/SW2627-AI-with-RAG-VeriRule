@@ -285,62 +285,77 @@ export default function RemediationPage() {
   }
 
   return (
-    <div className="remediation-page">
-      {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div className="page-header">
+    <div className="remediation-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <h1 className="page-title">Compliance Breach Remediation & CAPA Workflow</h1>
-            <span className="sidebar-badge" style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.8rem', padding: '0.2rem 0.6rem' }}>
-              Governance Engine
-            </span>
+          <div className="enterprise-category-tag">
+            <span>🔧 REMEDIATION & CAPA ENGINE</span>
           </div>
-          <p className="page-subtitle">
-            Assign Corrective Actions (CAPA), monitor SLA deadlines, attach verification evidence, and execute supervisory sign-offs.
+          <h1 className="enterprise-header-title">Breach Remediation & CAPA Workflow</h1>
+          <p className="enterprise-header-subtitle">
+            Assign Corrective and Preventive Actions (CAPA), monitor SLA deadlines, attach verification evidence, and execute supervisory sign-offs.
           </p>
         </div>
-
-        <div className="header-actions" style={{ display: 'flex', gap: '0.75rem' }}>
-          <button type="button" onClick={() => setShowCreateModal(true)} className="btn btn-primary btn-sm">
-            ➕ Assign New CAPA
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button type="button" onClick={() => setShowCreateModal(true)} className="enterprise-btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Assign New CAPA
           </button>
-          <button type="button" onClick={handleExportReport} className="btn btn-secondary btn-sm">
-            📥 Export CAPA Audit Report
+          <button type="button" onClick={handleExportReport} className="enterprise-btn-outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Audit Report
           </button>
         </div>
       </div>
 
-      {/* ── Summary Metrics Grid ─────────────────────────────────────────── */}
-      <div className="diff-summary-grid mb-4">
-        <div className="card metric-card">
-          <div className="metric-label">Open CAPA Tasks</div>
-          <div className="metric-value" style={{ color: '#ef4444' }}>{openCount}</div>
-          <div className="metric-sub" style={{ color: '#991b1b', marginTop: '0.2rem' }}>
-            Awaiting initial action
+      {/* ── Enterprise Stat Cards Grid ────────────────────────────────────────── */}
+      <div className="enterprise-grid-4" style={{ marginBottom: '1.5rem' }}>
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #EF4444, #B91C1C)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">Open CAPA Tasks</span>
+            <div className="enterprise-icon-box" style={{ background: 'rgba(239,68,68,0.1)', color: '#EF4444' }}>⚠️</div>
+          </div>
+          <div className="enterprise-stat-val" style={{ color: '#EF4444' }}>{openCount}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>Awaiting initial action</span>
+            <span className="enterprise-badge enterprise-badge-danger">Action Required</span>
           </div>
         </div>
 
-        <div className="card metric-card">
-          <div className="metric-label">In Progress & Review</div>
-          <div className="metric-value" style={{ color: '#d97706' }}>{inProgressCount + reviewCount}</div>
-          <div className="metric-sub" style={{ color: '#b45309', marginTop: '0.2rem' }}>
-            {inProgressCount} Active | {reviewCount} Under Audit Review
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #F59E0B, #D97706)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">In Progress & Review</span>
+            <div className="enterprise-icon-box" style={{ background: 'rgba(245,158,11,0.1)', color: '#D97706' }}>⏳</div>
+          </div>
+          <div className="enterprise-stat-val" style={{ color: '#D97706' }}>{inProgressCount + reviewCount}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>{inProgressCount} Active | {reviewCount} Review</span>
+            <span className="enterprise-badge enterprise-badge-warning">In Flight</span>
           </div>
         </div>
 
-        <div className="card metric-card">
-          <div className="metric-label">Closed & Certified</div>
-          <div className="metric-value" style={{ color: '#16a34a' }}>{closedCount}</div>
-          <div className="metric-sub" style={{ color: '#15803d', marginTop: '0.2rem' }}>
-            Fully remediated & signed off
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #10B981, #059669)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">Closed & Certified</span>
+            <div className="enterprise-icon-box" style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981' }}>✓</div>
+          </div>
+          <div className="enterprise-stat-val" style={{ color: '#10B981' }}>{closedCount}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>Signed off & verified</span>
+            <span className="enterprise-badge enterprise-badge-success">Certified</span>
           </div>
         </div>
 
-        <div className="card metric-card" style={{ borderColor: 'var(--color-primary-light)' }}>
-          <div className="metric-label">Audit Readiness Score</div>
-          <div className="metric-value" style={{ color: 'var(--color-primary)' }}>{readinessScore}%</div>
-          <div className="metric-sub" style={{ color: '#4338ca', marginTop: '0.2rem' }}>
-            Regulatory Compliance Index
+        <div className="enterprise-stat-card" style={{ '--card-accent': 'linear-gradient(90deg, #4D85FF, #2563EB)' } as React.CSSProperties}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="enterprise-stat-label">Audit Readiness</span>
+            <div className="enterprise-icon-box">📊</div>
+          </div>
+          <div className="enterprise-stat-val" style={{ color: '#2563EB' }}>{readinessScore}%</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748B' }}>
+            <span>Compliance Index</span>
+            <span className="enterprise-badge enterprise-badge-info">High Readiness</span>
           </div>
         </div>
       </div>

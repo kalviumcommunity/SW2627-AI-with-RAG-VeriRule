@@ -159,29 +159,27 @@ export default function RuleTimelinePage() {
   }
 
   return (
-    <div className="timeline-page">
-      {/* ── Page Header ─────────────────────────────────────────────── */}
-      <div className="dashboard-welcome">
+    <div className="timeline-page" style={{ padding: '0 0 2rem 0' }}>
+      {/* ── Enterprise Page Header ────────────────────────────────────────────── */}
+      <div className="enterprise-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <span className="eyebrow">Regulatory Document Lineage</span>
-          <h1>Rule Supersession Timeline</h1>
-          <p>
-            Visualize how compliance rules evolved over time. Trace supersession chains from
-            historical circulars to current Master Directions.
+          <div className="enterprise-category-tag">
+            <span>⏳ DOCUMENT LINEAGE & SUPERSESSION</span>
+          </div>
+          <h1 className="enterprise-header-title">Rule Supersession Timeline</h1>
+          <p className="enterprise-header-subtitle">
+            Visualize how compliance rules evolved over time. Trace supersession chains from historical circulars to current Master Directions.
           </p>
         </div>
-        <div className="doc-header-stats">
-          <div className="header-stat-chip">
-            <span>Active Rules</span>
-            <strong style={{ color: '#10b981' }}>{activeCount}</strong>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="enterprise-badge enterprise-badge-success" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+            <span>Active: <strong>{activeCount}</strong></span>
           </div>
-          <div className="header-stat-chip">
-            <span>Superseded</span>
-            <strong style={{ color: '#ef4444' }}>{supersededCount}</strong>
+          <div className="enterprise-badge enterprise-badge-danger" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+            <span>Superseded: <strong>{supersededCount}</strong></span>
           </div>
-          <div className="header-stat-chip">
-            <span>Linked Chains</span>
-            <strong>{chainCount}</strong>
+          <div className="enterprise-badge enterprise-badge-violet" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+            <span>Linked Chains: <strong>{chainCount}</strong></span>
           </div>
         </div>
       </div>
