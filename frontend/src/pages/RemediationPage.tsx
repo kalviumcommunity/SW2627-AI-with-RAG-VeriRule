@@ -361,8 +361,7 @@ export default function RemediationPage() {
       </div>
 
       {/* ── Control & Search Bar ────────────────────────────────────────── */}
-      <div className="card diff-controls-card mb-4" style={{ padding: '1.25rem' }}>
-        <div className="diff-filter-toolbar">
+<div className="panel-card" style={{ marginBottom: '1.5rem' }}>        <div className="diff-filter-toolbar">
           <div className="search-box-wrap" style={{ flex: 1, minWidth: '240px' }}>
             <input
               type="text"
