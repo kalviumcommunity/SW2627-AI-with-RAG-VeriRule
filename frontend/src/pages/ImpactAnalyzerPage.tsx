@@ -413,10 +413,10 @@ export default function ImpactAnalyzerPage() {
             </div>
 
             <div className="drawer-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowReportModal(false)}>
+              <button type="button" className="btn btn-ghost btn-sm" aria-label="Close report modal" onClick={() => setShowReportModal(false)}>
                 Close
               </button>
-              <button type="button" className="btn btn-primary btn-sm" onClick={downloadJsonReport}>
+              <button type="button" className="btn btn-primary btn-sm" aria-label="Download impact assessment JSON" onClick={downloadJsonReport}>
                 Download Impact Assessment 📥
               </button>
             </div>
