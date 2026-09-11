@@ -366,7 +366,7 @@ export default function CircularsPage() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560 }}>
             <div className="modal-header">
               <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Upload New Circular</h3>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowUploadModal(false)}>✕</button>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowUploadModal(false)} aria-label="Close upload modal">✕</button>
             </div>
             <form onSubmit={handleUploadSubmit} className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               <div className="form-group">
@@ -428,7 +428,7 @@ export default function CircularsPage() {
                   {selectedCircular.id} — {selectedCircular.title}
                 </h3>
               </div>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelectedCircular(null)}>✕</button>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelectedCircular(null)} aria-label="Close inspect modal">✕</button>
             </div>
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
